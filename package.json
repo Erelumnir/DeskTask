@@ -1,6 +1,6 @@
 {
   "name": "todo-app",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A simple todo app with Dark Mode, Animation, Shortcuts, and Custom Task Appearance.",
   "main": "app/main.js",
   "scripts": {
@@ -26,7 +26,7 @@
     },
     "win": {
       "target": "nsis",
-      "icon": "src/icon.png"
+      "icon": "app/src/favicon.ico"
     }
   },
   "author": "CodeLore",
