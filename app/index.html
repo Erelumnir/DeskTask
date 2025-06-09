@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Desktop Todo List</title>
+  <title>DeskTask - By CodeLore</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -53,7 +53,7 @@
   </style>
 </head>
 <body>
-  <h1>Desktop Todo List</h1>
+  <h1>DeskTask - By CodeLore</h1>
   <div id="tasks"></div>
   <form id="taskForm">
     <input type="text" id="taskInput" placeholder="Enter task...">
@@ -68,8 +68,6 @@
   <button id="darkModeToggle">Toggle Dark Mode</button>
 
   <script>
-    const { ipcRenderer } = require('electron');
-
     // Dark Mode toggle
     document.getElementById('darkModeToggle').addEventListener('click', () => {
       document.body.classList.toggle('dark-mode');
