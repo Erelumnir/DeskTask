@@ -22,7 +22,7 @@ function createWindow() {
     },
   });
 
-  mainWindow.loadFile("index.html");
+  mainWindow.loadURL("file://" + path.join(__dirname, "index.html"));
   attachTitlebarToWindow(mainWindow);
 
   // Optional: open devtools by default
