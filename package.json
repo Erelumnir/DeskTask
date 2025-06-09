@@ -2,7 +2,7 @@
   "name": "todo-app",
   "version": "1.0.0",
   "description": "A simple todo app with Dark Mode, Animation, Shortcuts, and Custom Task Appearance.",
-  "main": "/app/main.js",
+  "main": "app/main.js",
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir",
@@ -25,10 +25,8 @@
       "output": "dist"
     },
     "win": {
-      "target": "nsis"
-    },
-    "mac": {
-      "target": "dmg"
+      "target": "nsis",
+      "icon": "src/icon.ico"
     }
   },
   "author": "CodeLore",
