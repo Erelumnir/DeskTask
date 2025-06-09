@@ -1,122 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>DeskTask - By CodeLore</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="icon.png" type="image/png">
-</head>
-<body>
-  <div id="app">
-    <h1>DeskTask - By CodeLore</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DeskTask</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <h1>DeskTask</h1>
 
-    <div id="tasks"></div>
+      <!-- Bulk Controls -->
+      <div id="bulk-controls">
+        <div>
+          <button id="clearCompleted" title="Clear completed tasks">
+            <img src="src/trash.svg" alt="Clear Completed" />
+          </button>
+        </div>
+      </div>
 
-    <form id="taskForm">
-      <input type="text" id="taskInput" placeholder="Enter task..." autocomplete="off" />
-      <select id="prioritySelect">
-        <option value="low-priority">Low</option>
-        <option value="medium-priority">Medium</option>
-        <option value="high-priority">High</option>
-      </select>
-      <button type="submit">Add Task</button>
-    </form>
-  </div>
+      <!-- New Task Form -->
+      <form id="taskForm">
+        <input type="text" id="taskInput" placeholder="Add new task..." />
+        <select id="prioritySelect">
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select>
+        <button type="submit">+</button>
+      </form>
 
-  <script>
-    const applyDarkMode = (enable) => {
-      document.body.classList.toggle('dark-mode', enable);
-      localStorage.setItem('darkMode', enable);
-    };
+      <!-- Tasks -->
+      <div id="taskList"></div>
 
-    if (localStorage.getItem('darkMode') === 'true') {
-      applyDarkMode(true);
-    }
+      <!-- Theme Toggle -->
+      <button id="themeToggle" title="Toggle light/dark mode">
+        <img id="themeIcon" src="src/moon.svg" alt="Toggle Theme" />
+      </button>
+    </div>
 
-    window.electron.on('tasks', (_, tasks) => {
-      const tasksContainer = document.getElementById('tasks');
-      tasksContainer.innerHTML = '';
-
-      tasks.forEach(task => {
-        const taskEl = document.createElement('div');
-        taskEl.className = `task ${task.completed ? 'completed' : ''} ${task.priority}`;
-        taskEl.innerHTML = `
-          <input type="checkbox" ${task.completed ? 'checked' : ''} data-id="${task.id}">
-          <span class="task-name" id="task-${task.id}">${task.name}</span>
-          <div class="buttons">
-            <button class="edit-button" data-id="${task.id}">✏️</button>
-            <button class="delete-button" data-id="${task.id}">🗑️</button>
-          </div>
-        `;
-        tasksContainer.appendChild(taskEl);
-      });
-
-      document.querySelectorAll('.edit-button').forEach(btn => {
-        btn.addEventListener('click', e => {
-          const button = e.target.closest('.edit-button');
-          const id = button.getAttribute('data-id');
-          const span = document.getElementById(`task-${id}`);
-          const currentName = span.textContent;
-
-          const taskElement = span.closest('.task');
-          const currentPriority = ['low-priority', 'medium-priority', 'high-priority']
-            .find(p => taskElement.classList.contains(p)) || 'low-priority';
-
-          const newName = prompt("Edit task name:", currentName);
-          if (!newName) return;
-
-          const newPriority = prompt("Edit priority (low, medium, high):", currentPriority.replace('-priority', ''));
-          const allowed = ['low', 'medium', 'high'];
-          const safePriority = allowed.includes(newPriority?.toLowerCase())
-            ? `${newPriority.toLowerCase()}-priority`
-            : currentPriority;
-
-          window.electron.send('edit-task', { id, name: newName, priority: safePriority });
-        });
-      });
-
-      document.querySelectorAll('.delete-button').forEach(btn => {
-        btn.addEventListener('click', e => {
-          const id = e.target.getAttribute('data-id');
-          window.electron.send('delete-task', id);
-        });
-      });
-
-      document.querySelectorAll('input[type="checkbox"]').forEach(box => {
-        box.addEventListener('change', e => {
-          const id = e.target.getAttribute('data-id');
-          window.electron.send('toggle-task', id);
-        });
-      });
-    });
-
-    document.getElementById('taskForm').addEventListener('submit', e => {
-      e.preventDefault();
-      const taskInput = document.getElementById('taskInput');
-      const priority = document.getElementById('prioritySelect').value;
-      const task = taskInput.value.trim();
-      if (task) {
-        window.electron.send('add-task', task, priority);
-        taskInput.value = '';
-      }
-    });
-
-    document.addEventListener('keydown', e => {
-      if (e.ctrlKey && e.key === 'n') {
-        document.getElementById('taskInput').focus();
-      }
-      if (e.ctrlKey && e.key === 'd') {
-        const box = document.querySelector('input[type="checkbox"]:checked');
-        if (box) window.electron.send('delete-task', box.getAttribute('data-id'));
-      }
-      if (e.ctrlKey && e.key === 'm') {
-        const dark = document.body.classList.toggle('dark-mode');
-        localStorage.setItem('darkMode', dark);
-      }
-      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
-        window.electron.send('open-devtools');
-      }
-    });
-  </script>
-</body>
+    <script src="renderer.js"></script>
+  </body>
 </html>
