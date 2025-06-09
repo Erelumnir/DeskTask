@@ -108,9 +108,10 @@ button:hover {
     overflow: hidden;
     min-height: 52px;
     padding-right: 10px;
-    padding-left: 8px;
+    padding-left: 10px;
     position: relative;
     transition: transform 0.2s ease, opacity 0.2s ease;
+    animation: fadeInSlide 0.2s ease;
     cursor: pointer;
 }
 
@@ -122,6 +123,25 @@ body.light .task {
     opacity: 0.6;
     text-decoration: line-through;
     background-color: #2c2c39;
+    transform: scale(0.98);
+}
+
+.task.fade-out {
+    opacity: 0;
+    transform: translateX(20px);
+    pointer-events: none;
+}
+
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .task .marker {
@@ -164,23 +184,6 @@ body.light .task {
     justify-content: center;
 }
 
-.delete-btn img {
-    width: 20px;
-    height: 20px;
-    pointer-events: none;
-    filter: brightness(0) invert(1);
-    /* for dark mode */
-}
-
-body.light .delete-btn img {
-    filter: none;
-}
-
-.delete-btn:hover {
-    background-color: var(--danger);
-    border-radius: var(--radius);
-}
-
 #bulk-controls {
     display: flex;
     justify-content: flex-end;
@@ -206,14 +209,20 @@ body.light .delete-btn img {
     border-radius: var(--radius);
 }
 
-#bulk-controls img {
-    width: 22px;
-    height: 22px;
+/* Shared icon styles */
+#themeToggle img,
+#clearCompleted img,
+.delete-btn img {
+    width: 20px;
+    height: 20px;
     pointer-events: none;
+    filter: brightness(0) invert(1);
 }
 
-.task.selected {
-    outline: 2px solid var(--accent);
+body.light #themeToggle img,
+body.light #clearCompleted img,
+body.light .delete-btn img {
+    filter: none;
 }
 
 #themeToggle {
@@ -238,41 +247,6 @@ body.light #themeToggle {
     background-color: var(--bg-light-medium);
 }
 
-#themeToggle img {
-    width: 22px;
-    height: 22px;
-    pointer-events: none;
-}
-
-/* Entry animation */
-@keyframes fadeInSlide {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.task {
-    animation: fadeInSlide 0.2s ease;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-/* Completion animation */
-.task.completed {
-    opacity: 0.6;
-    text-decoration: line-through;
-    background-color: #2c2c39;
-    transform: scale(0.98);
-}
-
-/* Deletion fade-out */
-.task.fade-out {
-    opacity: 0;
-    transform: translateX(20px);
-    pointer-events: none;
+.task.selected {
+    outline: 2px solid var(--accent);
 }
