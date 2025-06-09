@@ -18,6 +18,14 @@ function createWindow() {
     },
   });
 
+  mainWindow.webContents.on('before-input-event', (event, input) => {
+    const isDevShortcut = input.control && input.shift && input.key.toLowerCase() === 'i';
+    if (isDevShortcut) {
+      event.preventDefault();
+      mainWindow.webContents.toggleDevTools();
+    }
+  });
+
   mainWindow.loadFile("index.html");
 
   const taskFile = path.join(app.getPath("userData"), "tasks.json");
@@ -49,6 +57,23 @@ app.whenReady().then(() => {
 app.on("before-quit", () => {
   const taskFile = path.join(app.getPath("userData"), "tasks.json");
   fs.writeFileSync(taskFile, JSON.stringify(tasks));
+});
+
+ipcMain.on("window-control", (event, action) => {
+  if (!mainWindow) return;
+  switch (action) {
+    case "minimize":
+      mainWindow.minimize();
+      break;
+    case "maximize":
+      mainWindow.isMaximized()
+        ? mainWindow.unmaximize()
+        : mainWindow.maximize();
+      break;
+    case "close":
+      mainWindow.close();
+      break;
+  }
 });
 
 ipcMain.on("add-task", (e, name, priority) => {

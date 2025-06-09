@@ -76,3 +76,39 @@ button:hover {
 .high-priority {
     border-left: 4px solid #f44336;
 }
+
+#titlebar {
+    -webkit-app-region: drag;
+    background-color: #1a1a24;
+    height: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    user-select: none;
+}
+
+#window-controls {
+    display: flex;
+    gap: 8px;
+    -webkit-app-region: no-drag;
+}
+
+#window-controls button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 14px;
+    width: 28px;
+    height: 28px;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+#window-controls button:hover {
+    background-color: #333;
+}
