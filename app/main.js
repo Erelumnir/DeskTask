@@ -17,7 +17,8 @@ function createWindow() {
     },
   });
 
-  mainWindow.loadFile("index.html");
+  mainWindow.loadURL("file://" + path.join(__dirname, "index.html"));
+
 
   // Load tasks from file
   const tasksFilePath = path.join(app.getPath("userData"), "tasks.json");
