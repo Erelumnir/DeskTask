@@ -1,129 +1,122 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>DeskTask - By CodeLore</title>
-    <link rel="stylesheet" href="style.css" />
-    <link
-      rel="stylesheet"
-      href="node_modules/custom-electron-titlebar/lib/renderer/style.css"
-    />
-  </head>
-  <body>
-    <div id="app">
-      <h1>DeskTask - By CodeLore</h1>
-      <div id="tasks"></div>
-      <form id="taskForm">
-        <input type="text" id="taskInput" placeholder="Enter task..." />
-        <select id="prioritySelect">
-          <option value="low-priority">Low</option>
-          <option value="medium-priority">Medium</option>
-          <option value="high-priority">High</option>
-        </select>
-        <button type="submit">Add Task</button>
-      </form>
-    </div>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DeskTask - By CodeLore</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="icon.png" type="image/png">
+</head>
+<body>
+  <div id="app">
+    <h1>DeskTask - By CodeLore</h1>
 
-    <script src="node_modules/custom-electron-titlebar/lib/renderer/titlebar.js"></script>
-    <script>
-      const titlebar = new customTitlebar.Titlebar({
-        backgroundColor: customTitlebar.Color.fromHex("#1a1a24"),
-        icon: "icon.png",
-        menu: null,
-        titleHorizontalAlignment: "left",
-      });
+    <div id="tasks"></div>
 
-      const toggleThemeIcon = document.createElement("div");
-      toggleThemeIcon.id = "theme-toggle";
-      toggleThemeIcon.innerText = "🌓";
-      toggleThemeIcon.title = "Toggle Dark Mode";
-      toggleThemeIcon.style.cursor = "pointer";
-      toggleThemeIcon.style.padding = "0 10px";
-      toggleThemeIcon.onclick = () => toggleDarkMode();
+    <form id="taskForm">
+      <input type="text" id="taskInput" placeholder="Enter task..." autocomplete="off" />
+      <select id="prioritySelect">
+        <option value="low-priority">Low</option>
+        <option value="medium-priority">Medium</option>
+        <option value="high-priority">High</option>
+      </select>
+      <button type="submit">Add Task</button>
+    </form>
+  </div>
 
-      titlebar.updateTitle("DeskTask");
-      titlebar.container.insertBefore(
-        toggleThemeIcon,
-        titlebar.container.lastChild
-      );
+  <script>
+    const applyDarkMode = (enable) => {
+      document.body.classList.toggle('dark-mode', enable);
+      localStorage.setItem('darkMode', enable);
+    };
 
-      function toggleDarkMode() {
-        document.body.classList.toggle("dark-mode");
-        localStorage.setItem(
-          "darkMode",
-          document.body.classList.contains("dark-mode")
-        );
-        titlebar.updateBackground(
-          customTitlebar.Color.fromHex(
-            document.body.classList.contains("dark-mode")
-              ? "#1a1a24"
-              : "#eeeeee"
-          )
-        );
-      }
+    if (localStorage.getItem('darkMode') === 'true') {
+      applyDarkMode(true);
+    }
 
-      if (localStorage.getItem("darkMode") === "true") {
-        document.body.classList.add("dark-mode");
-        titlebar.updateBackground(customTitlebar.Color.fromHex("#1a1a24"));
-      }
+    window.electron.on('tasks', (_, tasks) => {
+      const tasksContainer = document.getElementById('tasks');
+      tasksContainer.innerHTML = '';
 
-      window.electron.on("tasks", (event, tasks) => {
-        const container = document.getElementById("tasks");
-        container.innerHTML = "";
-        tasks.forEach((task) => {
-          const el = document.createElement("div");
-          el.className = `task ${task.completed ? "completed" : ""} ${
-            task.priority
-          }`;
-          el.dataset.id = task.id;
-          el.innerHTML = `
-          <input type="checkbox" ${task.completed ? "checked" : ""}>
-          <span class="task-name">${task.name}</span>
+      tasks.forEach(task => {
+        const taskEl = document.createElement('div');
+        taskEl.className = `task ${task.completed ? 'completed' : ''} ${task.priority}`;
+        taskEl.innerHTML = `
+          <input type="checkbox" ${task.completed ? 'checked' : ''} data-id="${task.id}">
+          <span class="task-name" id="task-${task.id}">${task.name}</span>
           <div class="buttons">
-            <button class="edit-button">✎</button>
-            <button class="delete-button">🗑</button>
+            <button class="edit-button" data-id="${task.id}">✏️</button>
+            <button class="delete-button" data-id="${task.id}">🗑️</button>
           </div>
         `;
-          container.appendChild(el);
+        tasksContainer.appendChild(taskEl);
+      });
+
+      document.querySelectorAll('.edit-button').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const button = e.target.closest('.edit-button');
+          const id = button.getAttribute('data-id');
+          const span = document.getElementById(`task-${id}`);
+          const currentName = span.textContent;
+
+          const taskElement = span.closest('.task');
+          const currentPriority = ['low-priority', 'medium-priority', 'high-priority']
+            .find(p => taskElement.classList.contains(p)) || 'low-priority';
+
+          const newName = prompt("Edit task name:", currentName);
+          if (!newName) return;
+
+          const newPriority = prompt("Edit priority (low, medium, high):", currentPriority.replace('-priority', ''));
+          const allowed = ['low', 'medium', 'high'];
+          const safePriority = allowed.includes(newPriority?.toLowerCase())
+            ? `${newPriority.toLowerCase()}-priority`
+            : currentPriority;
+
+          window.electron.send('edit-task', { id, name: newName, priority: safePriority });
         });
       });
 
-      document.getElementById("taskForm").addEventListener("submit", (e) => {
-        e.preventDefault();
-        const name = document.getElementById("taskInput").value.trim();
-        const priority = document.getElementById("prioritySelect").value;
-        if (name) {
-          window.electron.send("add-task", name, priority);
-          document.getElementById("taskInput").value = "";
-        }
+      document.querySelectorAll('.delete-button').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const id = e.target.getAttribute('data-id');
+          window.electron.send('delete-task', id);
+        });
       });
 
-      document.getElementById("tasks").addEventListener("click", (e) => {
-        const task = e.target.closest(".task");
-        const id = task?.dataset.id;
-        if (!id) return;
-
-        if (e.target.classList.contains("edit-button")) {
-          const name = task.querySelector(".task-name").textContent;
-          const newName = prompt("Edit task:", name);
-          if (newName) window.electron.send("edit-task", { id, name: newName });
-        }
-
-        if (e.target.classList.contains("delete-button")) {
-          window.electron.send("delete-task", id);
-        }
-
-        if (e.target.matches('input[type="checkbox"]')) {
-          window.electron.send("toggle-task", id);
-        }
+      document.querySelectorAll('input[type="checkbox"]').forEach(box => {
+        box.addEventListener('change', e => {
+          const id = e.target.getAttribute('data-id');
+          window.electron.send('toggle-task', id);
+        });
       });
+    });
 
-      document.addEventListener("keydown", (e) => {
-        if (e.ctrlKey && e.shiftKey && e.key === "I")
-          window.electron.send("open-devtools");
-        if (e.ctrlKey && e.key === "n")
-          document.getElementById("taskInput").focus();
-      });
-    </script>
-  </body>
+    document.getElementById('taskForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const taskInput = document.getElementById('taskInput');
+      const priority = document.getElementById('prioritySelect').value;
+      const task = taskInput.value.trim();
+      if (task) {
+        window.electron.send('add-task', task, priority);
+        taskInput.value = '';
+      }
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey && e.key === 'n') {
+        document.getElementById('taskInput').focus();
+      }
+      if (e.ctrlKey && e.key === 'd') {
+        const box = document.querySelector('input[type="checkbox"]:checked');
+        if (box) window.electron.send('delete-task', box.getAttribute('data-id'));
+      }
+      if (e.ctrlKey && e.key === 'm') {
+        const dark = document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', dark);
+      }
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
+        window.electron.send('open-devtools');
+      }
+    });
+  </script>
+</body>
 </html>
