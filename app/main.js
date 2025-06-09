@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs");
+const AutoLaunch = require("auto-launch");
 
 let mainWindow;
 let tasks = [];
@@ -10,8 +11,9 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
-      nodeIntegration: true,
+      preload: path.join(__dirname, "app/preload.js"),
+      nodeIntegration: false, // Ensure security by disabling nodeIntegration
+      contextIsolation: true, // Isolate context for security
     },
   });
 
@@ -34,7 +36,6 @@ app.on("ready", () => {
   createWindow();
 
   // Automatically launch the app on startup
-  const AutoLaunch = require("auto-launch");
   const appLaunch = new AutoLaunch({
     name: "Desktop Todo List", // Name of your app
     isHidden: false,
