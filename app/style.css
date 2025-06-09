@@ -1,0 +1,78 @@
+:root {
+    --bg-dark: #0d0d12;
+    --bg-medium: #1a1a24;
+    --text-light: #ffffff;
+    --accent: #6d5dfc;
+    --danger: #ff4c4c;
+    --font-main: 'Segoe UI', sans-serif;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    font-family: var(--font-main);
+    padding: 20px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark-mode {
+    background-color: #121212;
+    color: white;
+}
+
+h1 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+}
+
+input[type="text"],
+select,
+button {
+    background-color: var(--bg-medium);
+    color: var(--text-light);
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 10px;
+    margin-right: 5px;
+    font-size: 1em;
+}
+
+button {
+    background-color: var(--accent);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+button:hover {
+    background-color: #5c4de1;
+}
+
+.task {
+    background-color: var(--bg-medium);
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.task.completed {
+    text-decoration: line-through;
+    opacity: 0.5;
+    transform: scale(0.95);
+}
+
+.low-priority {
+    border-left: 4px solid #4caf50;
+}
+
+.medium-priority {
+    border-left: 4px solid #ffeb3b;
+}
+
+.high-priority {
+    border-left: 4px solid #f44336;
+}
