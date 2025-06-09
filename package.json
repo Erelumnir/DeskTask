@@ -1,0 +1,36 @@
+{
+  "name": "todo-app",
+  "version": "1.0.0",
+  "description": "A simple todo app with Dark Mode, Animation, Shortcuts, and Custom Task Appearance.",
+  "main": "/app/main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "dependencies": {
+    "auto-launch": "^5.0.0"
+  },
+  "devDependencies": {
+    "electron-builder": "^26.0.12",
+    "electron": "^24.0.0"
+  },
+  "build": {
+    "appId": "com.example.todoapp",
+    "productName": "DeskTask",
+    "files": [
+      "**/*"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    }
+  },
+  "author": "CodeLore",
+  "license": "ISC"
+}

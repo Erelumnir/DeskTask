@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Desktop Todo List</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+      }
+
+      body.dark-mode {
+        background-color: #121212;
+        color: white;
+      }
+
+      .task {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        transition: transform 0.2s; /* Animation for task */
+      }
+
+      .task.completed {
+        text-decoration: line-through;
+        opacity: 0.5;
+        transform: scale(0.95);
+      }
+
+      button {
+        margin-left: 10px;
+        cursor: pointer;
+      }
+
+      input[type="text"] {
+        border: 1px solid #ccc;
+        padding: 5px;
+        margin-top: 5px;
+        width: 80%;
+      }
+
+      /* Task priority colors */
+      .high-priority {
+        background-color: #f44336; /* Red */
+      }
+      .medium-priority {
+        background-color: #ffeb3b; /* Yellow */
+      }
+      .low-priority {
+        background-color: #4caf50; /* Green */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Desktop Todo List</h1>
+    <div id="tasks"></div>
+    <form id="taskForm">
+      <input type="text" id="taskInput" placeholder="Enter task..." />
+      <select id="prioritySelect">
+        <option value="low-priority">Low</option>
+        <option value="medium-priority">Medium</option>
+        <option value="high-priority">High</option>
+      </select>
+      <button type="submit">Add Task</button>
+    </form>
+
+    <button id="darkModeToggle">Toggle Dark Mode</button>
+
+    <script>
+      const { ipcRenderer } = require("electron");
+
+      // Dark Mode toggle
+      document
+        .getElementById("darkModeToggle")
+        .addEventListener("click", () => {
+          document.body.classList.toggle("dark-mode");
+          localStorage.setItem(
+            "darkMode",
+            document.body.classList.contains("dark-mode")
+          );
+        });
+
+      // Check if dark mode is enabled on page load
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
+      }
+
+      // Task completion animation and toggling
+      ipcRenderer.on("tasks", (event, tasks) => {
+        const tasksContainer = document.getElementById("tasks");
+        tasksContainer.innerHTML = "";
+        tasks.forEach((task) => {
+          const taskElement = document.createElement("div");
+          taskElement.className =
+            "task" + (task.completed ? " completed" : "") + " " + task.priority;
+          taskElement.innerHTML = `
+          <input type="checkbox" id="${task.id}" ${
+            task.completed ? "checked" : ""
+          } data-id="${task.id}">
+          <span id="task-${task.id}" class="task-name">${task.name}</span>
+          <button class="delete-button" data-id="${task.id}">Delete</button>
+          <button class="edit-button" data-id="${task.id}">Edit</button>
+        `;
+          tasksContainer.appendChild(taskElement);
+
+          // Edit and delete buttons
+          document.querySelectorAll(".edit-button").forEach((button) => {
+            button.addEventListener("click", (event) => {
+              const taskId = event.target.getAttribute("data-id");
+              const taskSpan = document.getElementById(`task-${taskId}`);
+              const newTaskName = prompt("Edit task", taskSpan.textContent);
+              if (newTaskName) {
+                ipcRenderer.send("edit-task", {
+                  id: taskId,
+                  name: newTaskName,
+                });
+              }
+            });
+          });
+
+          document.querySelectorAll(".delete-button").forEach((button) => {
+            button.addEventListener("click", (event) => {
+              const taskId = event.target.getAttribute("data-id");
+              ipcRenderer.send("delete-task", taskId);
+            });
+          });
+
+          document
+            .querySelectorAll('input[type="checkbox"]')
+            .forEach((checkbox) => {
+              checkbox.addEventListener("change", (event) => {
+                const taskId = event.target.getAttribute("data-id");
+                ipcRenderer.send("toggle-task", taskId);
+              });
+            });
+        });
+      });
+
+      // Handle adding a new task
+      document
+        .getElementById("taskForm")
+        .addEventListener("submit", (event) => {
+          event.preventDefault();
+          const taskInput = document.getElementById("taskInput");
+          const prioritySelect = document.getElementById("prioritySelect");
+          const task = taskInput.value.trim();
+          const priority = prioritySelect.value;
+
+          if (task !== "") {
+            ipcRenderer.send("add-task", task, priority);
+            taskInput.value = ""; // Clear input after submission
+          }
+        });
+
+      // Keyboard shortcuts for various actions
+      document.addEventListener("keydown", (event) => {
+        // CTRL+N to add a new task (focus on input)
+        if (event.ctrlKey && event.key === "n") {
+          const taskInput = document.getElementById("taskInput");
+          taskInput.focus();
+        }
+
+        // CTRL+D to delete selected task
+        if (event.ctrlKey && event.key === "d") {
+          const taskCheckbox = document.querySelector(
+            'input[type="checkbox"]:checked'
+          );
+          if (taskCheckbox) {
+            ipcRenderer.send(
+              "delete-task",
+              taskCheckbox.getAttribute("data-id")
+            );
+          }
+        }
+
+        // CTRL+M to toggle dark mode
+        if (event.ctrlKey && event.key === "m") {
+          document.body.classList.toggle("dark-mode");
+          localStorage.setItem(
+            "darkMode",
+            document.body.classList.contains("dark-mode")
+          );
+        }
+      });
+    </script>
+  </body>
+</html>
