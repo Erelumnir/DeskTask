@@ -26,7 +26,8 @@ function createWindow() {
     }
   });
 
-  mainWindow.loadFile("index.html");
+  mainWindow.loadURL("file://" + path.join(__dirname, "index.html"));
+
 
   const taskFile = path.join(app.getPath("userData"), "tasks.json");
   if (fs.existsSync(taskFile)) {
