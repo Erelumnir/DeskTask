@@ -4,46 +4,72 @@
     <meta charset="UTF-8" />
     <title>DeskTask - By CodeLore</title>
     <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="node_modules/custom-electron-titlebar/lib/renderer/style.css"
+    />
   </head>
   <body>
-    <div id="titlebar">
-      <div id="drag-region">
-        <span id="app-title">DeskTask</span>
-        <div id="window-controls">
-          <button id="min-btn">–</button>
-          <button id="max-btn">☐</button>
-          <button id="close-btn">✕</button>
-        </div>
-      </div>
+    <div id="app">
+      <h1>DeskTask - By CodeLore</h1>
+      <div id="tasks"></div>
+      <form id="taskForm">
+        <input type="text" id="taskInput" placeholder="Enter task..." />
+        <select id="prioritySelect">
+          <option value="low-priority">Low</option>
+          <option value="medium-priority">Medium</option>
+          <option value="high-priority">High</option>
+        </select>
+        <button type="submit">Add Task</button>
+      </form>
     </div>
 
-    <h1>DeskTask - By CodeLore</h1>
-    <div id="tasks"></div>
-
-    <form id="taskForm">
-      <input type="text" id="taskInput" placeholder="Enter task..." />
-      <select id="prioritySelect">
-        <option value="low-priority">Low</option>
-        <option value="medium-priority">Medium</option>
-        <option value="high-priority">High</option>
-      </select>
-      <button type="submit">Add Task</button>
-    </form>
-
-    <button id="darkModeToggle">Toggle Dark Mode</button>
-
+    <script src="node_modules/custom-electron-titlebar/lib/renderer/titlebar.js"></script>
     <script>
-      document.getElementById("min-btn").onclick = () =>
-        window.electron.send("window-control", "minimize");
-      document.getElementById("max-btn").onclick = () =>
-        window.electron.send("window-control", "maximize");
-      document.getElementById("close-btn").onclick = () =>
-        window.electron.send("window-control", "close");
+      const titlebar = new customTitlebar.Titlebar({
+        backgroundColor: customTitlebar.Color.fromHex("#1a1a24"),
+        icon: "icon.png",
+        menu: null,
+        titleHorizontalAlignment: "left",
+      });
+
+      const toggleThemeIcon = document.createElement("div");
+      toggleThemeIcon.id = "theme-toggle";
+      toggleThemeIcon.innerText = "🌓";
+      toggleThemeIcon.title = "Toggle Dark Mode";
+      toggleThemeIcon.style.cursor = "pointer";
+      toggleThemeIcon.style.padding = "0 10px";
+      toggleThemeIcon.onclick = () => toggleDarkMode();
+
+      titlebar.updateTitle("DeskTask");
+      titlebar.container.insertBefore(
+        toggleThemeIcon,
+        titlebar.container.lastChild
+      );
+
+      function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+        localStorage.setItem(
+          "darkMode",
+          document.body.classList.contains("dark-mode")
+        );
+        titlebar.updateBackground(
+          customTitlebar.Color.fromHex(
+            document.body.classList.contains("dark-mode")
+              ? "#1a1a24"
+              : "#eeeeee"
+          )
+        );
+      }
+
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
+        titlebar.updateBackground(customTitlebar.Color.fromHex("#1a1a24"));
+      }
 
       window.electron.on("tasks", (event, tasks) => {
         const container = document.getElementById("tasks");
         container.innerHTML = "";
-
         tasks.forEach((task) => {
           const el = document.createElement("div");
           el.className = `task ${task.completed ? "completed" : ""} ${
@@ -53,8 +79,10 @@
           el.innerHTML = `
           <input type="checkbox" ${task.completed ? "checked" : ""}>
           <span class="task-name">${task.name}</span>
-          <button class="edit-button">Edit</button>
-          <button class="delete-button">Delete</button>
+          <div class="buttons">
+            <button class="edit-button">✎</button>
+            <button class="delete-button">🗑</button>
+          </div>
         `;
           container.appendChild(el);
         });
@@ -75,13 +103,13 @@
         const id = task?.dataset.id;
         if (!id) return;
 
-        if (e.target.matches(".edit-button")) {
+        if (e.target.classList.contains("edit-button")) {
           const name = task.querySelector(".task-name").textContent;
           const newName = prompt("Edit task:", name);
           if (newName) window.electron.send("edit-task", { id, name: newName });
         }
 
-        if (e.target.matches(".delete-button")) {
+        if (e.target.classList.contains("delete-button")) {
           window.electron.send("delete-task", id);
         }
 
@@ -90,27 +118,11 @@
         }
       });
 
-      // Dark mode
-      const toggleDark = () => {
-        document.body.classList.toggle("dark-mode");
-        localStorage.setItem(
-          "darkMode",
-          document.body.classList.contains("dark-mode")
-        );
-      };
-
-      document
-        .getElementById("darkModeToggle")
-        .addEventListener("click", toggleDark);
-
-      if (localStorage.getItem("darkMode") === "true") {
-        document.body.classList.add("dark-mode");
-      }
-
       document.addEventListener("keydown", (e) => {
+        if (e.ctrlKey && e.shiftKey && e.key === "I")
+          window.electron.send("open-devtools");
         if (e.ctrlKey && e.key === "n")
           document.getElementById("taskInput").focus();
-        if (e.ctrlKey && e.key === "m") toggleDark();
       });
     </script>
   </body>

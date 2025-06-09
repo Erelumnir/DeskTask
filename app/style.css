@@ -1,114 +1,210 @@
 :root {
+    --bg-light: #eeeeee;
     --bg-dark: #0d0d12;
-    --bg-medium: #1a1a24;
-    --text-light: #ffffff;
+
+    --card-light: #f5f5f5;
+    --card-dark: #1a1a24;
+
+    --text-light: #111;
+    --text-dark: #ffffff;
+
     --accent: #6d5dfc;
+    --accent-hover: #5c4de1;
     --danger: #ff4c4c;
+
+    --low: #4caf50;
+    --medium: #ffeb3b;
+    --high: #f44336;
+
+    --radius: 10px;
     --font-main: 'Segoe UI', sans-serif;
 }
 
+/* ========== BASE ========== */
+html,
 body {
-    background-color: var(--bg-dark);
-    color: var(--text-light);
+    margin: 0;
+    padding: 0;
+    height: 100%;
     font-family: var(--font-main);
-    padding: 20px;
+    font-size: clamp(14px, 1.5vw, 18px);
+    background-color: var(--bg-light);
+    color: var(--text-light);
     transition: background-color 0.3s, color 0.3s;
+    display: flex;
+    justify-content: center;
 }
 
 body.dark-mode {
-    background-color: #121212;
-    color: white;
+    background-color: var(--bg-dark);
+    color: var(--text-dark);
 }
 
+/* ========== CONTAINER ========== */
+#app {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    max-width: 1000px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* ========== TITLE ========== */
 h1 {
+    margin: 0 0 20px 0;
     font-size: 1.8em;
+}
+
+/* ========== FORM ========== */
+form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
     margin-bottom: 20px;
 }
 
-input[type="text"],
+#taskInput {
+    flex: 1 1 300px;
+    padding: 12px;
+    border-radius: var(--radius);
+    border: none;
+    background-color: var(--card-light);
+    color: var(--text-light);
+    font-size: 1em;
+    transition: background-color 0.2s;
+}
+
+body.dark-mode #taskInput {
+    background-color: var(--card-dark);
+    color: var(--text-dark);
+}
+
 select,
 button {
-    background-color: var(--bg-medium);
-    color: var(--text-light);
+    padding: 12px;
+    border-radius: var(--radius);
     border: none;
-    border-radius: 10px;
-    padding: 10px;
-    margin-top: 10px;
-    margin-right: 5px;
     font-size: 1em;
+}
+
+select {
+    background-color: var(--card-light);
+    color: var(--text-light);
+}
+
+body.dark-mode select {
+    background-color: var(--card-dark);
+    color: var(--text-dark);
 }
 
 button {
     background-color: var(--accent);
+    color: white;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s;
 }
 
 button:hover {
-    background-color: #5c4de1;
+    background-color: var(--accent-hover);
 }
 
-.task {
-    background-color: var(--bg-medium);
-    border-radius: 12px;
-    padding: 10px;
-    margin-bottom: 10px;
+/* ========== TASK LIST ========== */
+#tasks {
+    flex: 1;
+    overflow-y: auto;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* ========== TASK ITEM ========== */
+.task {
+    display: flex;
     justify-content: space-between;
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    align-items: center;
+    background-color: var(--card-light);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+body.dark-mode .task {
+    background-color: var(--card-dark);
 }
 
 .task.completed {
-    text-decoration: line-through;
     opacity: 0.5;
-    transform: scale(0.95);
+    text-decoration: line-through;
+    transform: scale(0.97);
 }
 
+.task input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.2);
+}
+
+/* ========== TASK NAME + ACTIONS ========== */
+.task .task-name {
+    flex: 1;
+    padding-left: 10px;
+    font-size: 1em;
+    word-break: break-word;
+}
+
+.task .buttons {
+    display: flex;
+    gap: 8px;
+}
+
+/* ========== TASK BUTTONS ========== */
+.task button {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1.1em;
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: var(--radius);
+    transition: background-color 0.2s;
+}
+
+.task button.edit-button:hover {
+    background-color: var(--accent);
+    color: white;
+}
+
+.task button.delete-button:hover {
+    background-color: var(--danger);
+    color: white;
+}
+
+/* ========== PRIORITY MARKERS ========== */
 .low-priority {
-    border-left: 4px solid #4caf50;
+    border-left: 4px solid var(--low);
 }
 
 .medium-priority {
-    border-left: 4px solid #ffeb3b;
+    border-left: 4px solid var(--medium);
 }
 
 .high-priority {
-    border-left: 4px solid #f44336;
+    border-left: 4px solid var(--high);
 }
 
-#titlebar {
-    -webkit-app-region: drag;
-    background-color: #1a1a24;
-    height: 32px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 10px;
+/* ========== TITLEBAR CUSTOM ICON ========== */
+#theme-toggle {
+    font-size: 16px;
     color: white;
-    font-weight: bold;
-    font-size: 14px;
+    margin-left: auto;
+    margin-right: 8px;
+    padding: 6px;
     user-select: none;
-}
-
-#window-controls {
-    display: flex;
-    gap: 8px;
     -webkit-app-region: no-drag;
+    transition: transform 0.2s ease;
 }
 
-#window-controls button {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 14px;
-    width: 28px;
-    height: 28px;
-    line-height: 1;
-    cursor: pointer;
-    border-radius: 4px;
-}
-
-#window-controls button:hover {
-    background-color: #333;
+#theme-toggle:hover {
+    transform: scale(1.2);
 }
