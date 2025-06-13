@@ -15,6 +15,7 @@ function loadTasks() {
 
 function saveTasks(tasks) {
   fs.writeFileSync(tasksPath, JSON.stringify(tasks));
+  console.log("Writing to:", tasksPath);
 }
 
 function createWindow() {
@@ -22,6 +23,8 @@ function createWindow() {
     width: 800,
     height: 700,
     title: "DeskTask",
+    frame: false,
+    resizable: true,
     icon: path.join(__dirname, "src/favicon_dark.ico"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -40,23 +43,14 @@ app.on("window-all-closed", () => {
 });
 
 // IPC
-ipcMain.on("get-tasks", (event) => {
-  event.reply("tasks", loadTasks());
+ipcMain.on("save-tasks", (event, tasks) => {
+  console.log("Saving tasks");
+  saveTasks(tasks);
 });
 
-ipcMain.on("add-task", (event, task) => {
-  const tasks = loadTasks();
-  tasks.push({ ...task, id: Date.now().toString(), completed: false });
-  saveTasks(tasks);
-  event.reply("tasks", tasks);
-});
-
-ipcMain.on("toggle-task", (event, id) => {
-  const tasks = loadTasks();
-  const task = tasks.find((t) => t.id === id);
-  if (task) task.completed = !task.completed;
-  saveTasks(tasks);
-  event.reply("tasks", tasks);
+ipcMain.handle("get-tasks", () => {
+  console.log("Loading tasks");
+  return loadTasks();
 });
 
 ipcMain.on("delete-task", (event, id) => {
@@ -65,13 +59,17 @@ ipcMain.on("delete-task", (event, id) => {
   event.reply("tasks", tasks);
 });
 
-ipcMain.on("edit-task", (event, updatedTask) => {
-  const tasks = loadTasks();
-  const task = tasks.find((t) => t.id === updatedTask.id);
-  if (task) {
-    task.name = updatedTask.name;
-    task.priority = updatedTask.priority;
-  }
-  saveTasks(tasks);
-  event.reply("tasks", tasks);
+//<!-- Window Controls -->
+ipcMain.on("window-minimize", () => {
+  BrowserWindow.getFocusedWindow()?.minimize();
+});
+
+ipcMain.on("window-maximize", () => {
+  const win = BrowserWindow.getFocusedWindow();
+  if (!win) return;
+  win.isMaximized() ? win.unmaximize() : win.maximize();
+});
+
+ipcMain.on("window-close", () => {
+  BrowserWindow.getFocusedWindow()?.close();
 });

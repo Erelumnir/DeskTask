@@ -158,6 +158,10 @@ body.light form button img {
     filter: none;
 }
 
+#taskList {
+    width: 100%;
+}
+
 .task {
     display: flex;
     align-items: center;
@@ -255,11 +259,6 @@ body.light .task {
     justify-content: center;
 }
 
-#bulk-controls {
-    display: none;
-    /* now obsolete */
-}
-
 #themeToggle {
     background: transparent;
     border: none;
@@ -308,4 +307,109 @@ body.light .drag-handle {
     transform: scale(1.02);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
     z-index: 10;
+}
+
+#titlebar {
+    -webkit-app-region: drag;
+    width: 100%;
+    height: 32px;
+    background-color: var(--bg-medium);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0;
+    position: relative;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+body.light #titlebar {
+    background-color: var(--bg-light-medium);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+#appTitle {
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#appTitle img {
+    width: 20px;
+    height: 20px;
+}
+
+body.light #appTitle {
+    color: var(--text-dark);
+}
+
+#windowControls {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    display: flex;
+    -webkit-app-region: no-drag;
+}
+
+#windowControls button {
+    width: 46px;
+    height: 100%;
+    border: none;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#windowControls button:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+body.light #windowControls button {
+    color: var(--text-dark);
+}
+
+body.light #windowControls button:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+#windowControls button img {
+    width: 16px;
+    height: 16px;
+    filter: brightness(0) invert(1);
+}
+
+body.light #windowControls button img {
+    filter: none;
+}
+
+/* SCROLLBAR */
+body {
+    overflow-y: scroll;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 4px;
+}
+
+body.light ::-webkit-scrollbar-track {
+    background: var(--bg-light-dark);
+}
+
+body.light ::-webkit-scrollbar-thumb {
+    background: var(--accent-hover);
 }

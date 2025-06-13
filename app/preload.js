@@ -2,7 +2,11 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("electron", {
-  send: (channel, data) => ipcRenderer.send(channel, data),
-  on: (channel, callback) =>
-    ipcRenderer.on(channel, (event, ...args) => callback(...args)),
+  getTasks: () => ipcRenderer.invoke("get-tasks"),
+  saveTasks: (tasks) => ipcRenderer.send("save-tasks", tasks),
+  windowControl: {
+    minimize: () => ipcRenderer.send("window-minimize"),
+    maximize: () => ipcRenderer.send("window-maximize"),
+    close: () => ipcRenderer.send("window-close"),
+  },
 });

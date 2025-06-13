@@ -8,11 +8,21 @@ let tasks = [];
 
 // Load
 async function loadTasks() {
-  const saved = await window.electron.getTasks();
+  let saved = await window.electron.getTasks();
+
+  // Fallback: migrate from localStorage if file is empty
+  if (!saved || saved.length === 0) {
+    const legacy = localStorage.getItem("tasks");
+    if (legacy) {
+      saved = JSON.parse(legacy);
+      window.electron.saveTasks(saved); // persist to file
+      localStorage.removeItem("tasks"); // optional cleanup
+    }
+  }
+
   tasks = Array.isArray(saved) ? saved : [];
   renderTasks();
 }
-
 
 // Save
 function saveTasks() {
@@ -190,3 +200,14 @@ themeToggleBtn.addEventListener("click", () => {
 // Initialize
 applyTheme();
 loadTasks();
+
+//<!-- Add event listeners for window controls -->
+document.getElementById("minBtn").addEventListener("click", () => {
+  window.electron.windowControl.minimize();
+});
+document.getElementById("maxBtn").addEventListener("click", () => {
+  window.electron.windowControl.maximize();
+});
+document.getElementById("closeBtn").addEventListener("click", () => {
+  window.electron.windowControl.close();
+});
