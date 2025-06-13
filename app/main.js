@@ -73,3 +73,30 @@ ipcMain.on("window-maximize", () => {
 ipcMain.on("window-close", () => {
   BrowserWindow.getFocusedWindow()?.close();
 });
+
+// Menu handlers
+const { dialog } = require("electron");
+
+ipcMain.handle("export-tasks", async (event, tasks) => {
+  const { filePath } = await dialog.showSaveDialog({
+    defaultPath: "tasks.json",
+    filters: [{ name: "JSON", extensions: ["json"] }],
+  });
+  if (filePath) fs.writeFileSync(filePath, JSON.stringify(tasks, null, 2));
+});
+
+ipcMain.handle("import-tasks", async () => {
+  const { filePaths } = await dialog.showOpenDialog({
+    properties: ["openFile"],
+    filters: [{ name: "JSON", extensions: ["json"] }],
+  });
+  if (filePaths?.[0]) {
+    const file = fs.readFileSync(filePaths[0]);
+    return JSON.parse(file);
+  }
+  return null;
+});
+
+ipcMain.handle("clear-tasks", () => {
+  saveTasks([]);
+});

@@ -9,19 +9,26 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+
+    <!-- Title Bar -->
     <div id="titlebar">
       <div id="appTitle">
-        <img src="src/favicon.ico" alt="DeskTask" />
+        <img src="src/favicon.ico" alt="DeskTask" id="settingsToggle"/>
         <span>DeskTask</span>
       </div>
       
+      <!-- Window Controls -->
       <div id="windowControls">
         <<button id="minBtn"><img src="src/min.svg" alt="Minimize" /></button>
         <button id="maxBtn"><img src="src/max.svg" alt="Maximize" /></button>
         <button id="closeBtn"><img src="src/close.svg" alt="Close" /></button>
       </div>
     </div>
+
+    <!-- Main Content -->
     <div id="app">
+
+      <!-- Top Bar -->
       <div id="header">
         <h1>Your tasks</h1>
         <button id="themeToggle" title="Toggle light/dark mode">
@@ -43,6 +50,38 @@
 
       <!-- Tasks -->
       <div id="taskList"></div>
+
+      <!-- Modal  -->
+      <div id="settingsModal" class="modal">
+        <div class="settings-content">
+          <div class="dropdown-wrapper">
+            <details class="dropdown">
+              <summary>Hotkeys</summary>
+              <ul>
+                <li><strong>Ctrl + N</strong> — New Task</li>
+                <li><strong>Ctrl + Shift + C</strong> — Clear Completed</li>
+                <li><strong>Ctrl + E</strong> — Toggle Theme</li>
+                <li><strong>Ctrl + I</strong> — Import Tasks</li>
+                <li><strong>Ctrl + O</strong> — Export Tasks</li>
+                <li><strong>Ctrl + Shift + I</strong> — Open Inspector</li>
+              </ul>
+            </details>
+          
+            <details class="dropdown">
+              <summary>Settings</summary>
+              <div class="settings-actions">
+                <button id="exportTasks">Export Tasks</button>
+                <button id="importTasks">Import Tasks</button>
+                <button id="clearAllTasks">Clear All</button>
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+    
+    <!-- Toast -->
+     <div id="toast" hidden></div>
+    <!-- Scripts  -->
     <script src="renderer.js"></script>
   </body>
 </html>

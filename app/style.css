@@ -25,6 +25,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow-y: scroll;
+    padding-top: 32px;
 }
 
 body.light {
@@ -309,6 +311,8 @@ body.light .drag-handle {
     z-index: 10;
 }
 
+/* Title Bar */
+
 #titlebar {
     -webkit-app-region: drag;
     width: 100%;
@@ -318,7 +322,11 @@ body.light .drag-handle {
     align-items: center;
     justify-content: space-between;
     padding: 0;
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -337,11 +345,15 @@ body.light #titlebar {
 #appTitle img {
     width: 20px;
     height: 20px;
+    -webkit-app-region: no-drag;
+    cursor: pointer;
 }
 
 body.light #appTitle {
     color: var(--text-dark);
 }
+
+/* Window Controls */
 
 #windowControls {
     position: absolute;
@@ -390,10 +402,6 @@ body.light #windowControls button img {
 }
 
 /* SCROLLBAR */
-body {
-    overflow-y: scroll;
-}
-
 ::-webkit-scrollbar {
     width: 8px;
 }
@@ -413,4 +421,192 @@ body.light ::-webkit-scrollbar-track {
 
 body.light ::-webkit-scrollbar-thumb {
     background: var(--accent-hover);
+}
+
+/* Priority */
+.priority-edit-menu {
+    display: flex;
+    gap: 6px;
+    padding: 6px 8px;
+    background: rgba(40, 40, 40, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(6px);
+    z-index: 1000;
+}
+
+.priority-edit-menu button {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+}
+
+/* Priority menu colors */
+.priority-edit-menu .low {
+    background-color: var(--priority-low);
+}
+
+.priority-edit-menu .medium {
+    background-color: var(--priority-medium);
+}
+
+.priority-edit-menu .high {
+    background-color: var(--priority-high);
+}
+
+body.light .priority-edit-menu {
+    background: var(--bg-light-medium);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Settings Modal */
+#settingsModal {
+    position: fixed;
+    top: 40px;
+    left: 20px;
+    z-index: 1000;
+    background: var(--bg-medium);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius);
+    padding: 16px;
+    min-width: 240px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+}
+
+#settingsModal.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+body.light #settingsModal {
+    background: var(--bg-light-medium);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.settings-content h2 {
+    margin-top: 0;
+    font-size: 1.1rem;
+}
+
+.settings-content ul {
+    padding-left: 16px;
+    margin-bottom: 1rem;
+}
+
+.settings-content li {
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+}
+
+.settings-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.dropdown {
+    margin-bottom: 12px;
+}
+
+.dropdown summary {
+    font-weight: bold;
+    font-size: 0.95rem;
+    cursor: pointer;
+    padding: 4px 0;
+    list-style: none;
+    color: var(--text-light);
+}
+
+.dropdown[open] summary {
+    margin-bottom: 6px;
+}
+
+.dropdown ul {
+    padding-left: 16px;
+    margin: 0;
+}
+
+.settings-actions button {
+    width: 100%;
+    text-align: left;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    background: var(--accent);
+    border-radius: var(--radius);
+    transition: background 0.2s;
+    color: var(--text-light);
+    cursor: pointer;
+}
+
+.settings-actions button:hover {
+    background: var(--accent-hover);
+}
+
+body.light .settings-actions button {
+    background: var(--accent);
+    border-radius: var(--radius);
+    color: var(--text-dark);
+}
+
+body.light .settings-actions button:hover {
+    background: var(--accent-hover);
+}
+
+.dropdown[open]>*:not(summary) {
+    animation: fadeIn 0.25s ease;
+}
+
+.dropdown-wrapper {
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+#settingsModal.show .dropdown-wrapper {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-2px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Toast Notifications */
+#toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    padding: 10px 16px;
+    background: var(--accent);
+    color: white;
+    font-size: 0.9rem;
+    border-radius: var(--radius);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateY(10px);
+    z-index: 9999;
+}
+
+#toast.show {
+    opacity: 1;
+    transform: translateY(0);
 }

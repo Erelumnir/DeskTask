@@ -10,3 +10,9 @@ contextBridge.exposeInMainWorld("electron", {
     close: () => ipcRenderer.send("window-close"),
   },
 });
+
+contextBridge.exposeInMainWorld("electronAPI", {
+  exportTasks: (tasks) => ipcRenderer.invoke("export-tasks", tasks),
+  importTasks: () => ipcRenderer.invoke("import-tasks"),
+  clearTasks: () => ipcRenderer.invoke("clear-tasks"),
+});

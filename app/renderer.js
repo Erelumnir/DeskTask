@@ -66,9 +66,11 @@ function createTaskElement(task) {
   }-priority`;
   div.dataset.dragId = task.id;
 
+  // Marker for visual indication
   const marker = document.createElement("div");
   marker.className = "marker";
 
+  // Drag handle for reordering
   const handle = document.createElement("div");
   handle.className = "drag-handle";
   handle.innerHTML = "☰";
@@ -81,6 +83,7 @@ function createTaskElement(task) {
     div.setAttribute("draggable", "false")
   );
 
+  // Task name with editable feature
   const name = document.createElement("div");
   name.className = "task-name";
   name.textContent = task.name;
@@ -91,9 +94,17 @@ function createTaskElement(task) {
   });
   name.addEventListener("click", (e) => e.stopPropagation());
 
+  // Spacer for layout
   const spacer = document.createElement("div");
   spacer.className = "task-spacer";
 
+  // Edit priority helpers
+  marker.addEventListener("click", (e) => {
+    e.stopPropagation();
+    showPriorityMenu(task, div, marker);
+  });
+
+  // Delete button + icon
   const deleteBtn = document.createElement("button");
   deleteBtn.className = "delete-btn";
   const trashIcon = document.createElement("img");
@@ -124,6 +135,7 @@ function createTaskElement(task) {
   div.addEventListener("dragstart", () => div.classList.add("dragging"));
   div.addEventListener("dragend", () => div.classList.remove("dragging"));
 
+  // Insert in DOM
   div.appendChild(marker);
   div.appendChild(handle);
   div.appendChild(name);
@@ -176,6 +188,41 @@ taskList.addEventListener("drop", () => {
   renderTasks();
 });
 
+// Priority menu
+function showPriorityMenu(task, container, anchor) {
+  // Remove any existing menu
+  document.querySelectorAll(".priority-edit-menu").forEach((el) => el.remove());
+
+  const menu = document.createElement("div");
+  menu.className = "priority-edit-menu";
+
+  ["low", "medium", "high"].forEach((level) => {
+    const btn = document.createElement("button");
+    btn.className = level;
+    btn.title = `Set ${level}`;
+    btn.addEventListener("click", () => {
+      task.priority = level;
+      saveTasks();
+
+      const updated = createTaskElement(task);
+      container.replaceWith(updated);
+    });
+    menu.appendChild(btn);
+  });
+
+  // Position the menu relative to marker
+  const rect = anchor.getBoundingClientRect();
+  menu.style.position = "fixed";
+  menu.style.left = `${rect.left + 16}px`;
+  menu.style.top = `${rect.top}px`;
+  menu.style.zIndex = "1000";
+
+  document.body.appendChild(menu);
+
+  // Auto-remove on click outside
+  document.addEventListener("click", () => menu.remove(), { once: true });
+}
+
 // Theme toggle
 const themeToggleBtn = document.getElementById("themeToggle");
 const themeIcon = document.getElementById("themeIcon");
@@ -201,7 +248,7 @@ themeToggleBtn.addEventListener("click", () => {
 applyTheme();
 loadTasks();
 
-//<!-- Add event listeners for window controls -->
+// Add event listeners for window controls
 document.getElementById("minBtn").addEventListener("click", () => {
   window.electron.windowControl.minimize();
 });
@@ -211,3 +258,72 @@ document.getElementById("maxBtn").addEventListener("click", () => {
 document.getElementById("closeBtn").addEventListener("click", () => {
   window.electron.windowControl.close();
 });
+
+// Modal logic
+const settingsToggle = document.getElementById("settingsToggle");
+const settingsModal = document.getElementById("settingsModal");
+
+settingsToggle.addEventListener("click", (e) => {
+  e.stopPropagation();
+  const isVisible = settingsModal.classList.contains("show");
+  settingsModal.classList.toggle("show", !isVisible);
+});
+
+// Hide modal if clicking outside
+document.addEventListener("click", (e) => {
+  const isInside =
+    settingsModal.contains(e.target) || settingsToggle.contains(e.target);
+  if (!isInside) {
+    settingsModal.classList.remove("show");
+
+    // Collapse dropdowns inside the modal
+    document
+      .querySelectorAll("#settingsModal details")
+      .forEach((d) => d.removeAttribute("open"));
+  }
+});
+
+// Modal settings buttons
+document.getElementById("exportTasks").addEventListener("click", () => {
+  window.electronAPI.exportTasks(tasks);
+  showToast(`Exported tasks.`);
+});
+
+document.getElementById("importTasks").addEventListener("click", async () => {
+  const imported = await window.electronAPI.importTasks();
+  if (Array.isArray(imported)) {
+    const append = confirm(
+      "Append to existing tasks?\nClick Cancel to replace."
+    );
+    tasks = append ? [...tasks, ...imported] : imported;
+    saveTasks();
+    renderTasks();
+    showToast(`Imported ${imported.length} tasks.`);
+  }
+});
+
+
+document.getElementById("clearAllTasks").addEventListener("click", () => {
+  const confirmClear = confirm("Are you sure you want to clear all tasks?");
+  if (confirmClear) {
+    tasks = [];
+    saveTasks();
+    renderTasks();
+    showToast("All tasks cleared.");
+  }
+});
+
+// Toast notifications
+function showToast(message, duration = 2500) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  toast.hidden = false;
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => (toast.hidden = true), 300);
+  }, duration);
+}
+
+// Hotkeys
