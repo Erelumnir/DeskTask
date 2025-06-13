@@ -4,24 +4,18 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/x-icon" href="src/favicon.ico">
-    <title>DeskTask, by CodeLore</title>
+    <link rel="icon" type="image/x-icon" href="src/favicon_dark.ico">
+    <title>DeskTask</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div id="app">
-      <h1>My tasks</h1>
-
-      <!-- Bulk Controls -->
-      <div id="bulk-controls">
-        <div>
-          <button id="clearCompleted" title="Clear completed tasks">
-            <img src="src/trash.svg" alt="Clear Completed" />
-          </button>
-        </div>
+      <div id="header">
+        <h1>Your tasks</h1>
+        <button id="themeToggle" title="Toggle light/dark mode">
+          <img id="themeIcon" src="src/moon.svg" alt="Toggle Theme" />
+        </button>
       </div>
-
-      <!-- New Task Form -->
       <form id="taskForm">
         <input type="text" id="taskInput" placeholder="Add new task..." />
         <select id="prioritySelect">
@@ -30,17 +24,13 @@
           <option value="high">High</option>
         </select>
         <button type="submit">+</button>
+        <button id="clearCompleted" title="Clear completed tasks">
+          <img src="src/trash.svg" alt="Clear Completed" />
+        </button>
       </form>
 
       <!-- Tasks -->
       <div id="taskList"></div>
-
-      <!-- Theme Toggle -->
-      <button id="themeToggle" title="Toggle light/dark mode">
-        <img id="themeIcon" src="src/moon.svg" alt="Toggle Theme" />
-      </button>
-    </div>
-
     <script src="renderer.js"></script>
   </body>
 </html>

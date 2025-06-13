@@ -22,7 +22,7 @@ function createWindow() {
     width: 800,
     height: 600,
     title: "DeskTask",
-    icon: path.join(__dirname, "src/favicon.ico"),
+    icon: path.join(__dirname, "src/favicon_dark.ico"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       sandbox: false,

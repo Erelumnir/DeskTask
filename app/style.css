@@ -11,7 +11,6 @@
     --radius: 10px;
     --font-main: 'Segoe UI', sans-serif;
 
-    /* Priority Colors */
     --priority-high: #ff4c4c;
     --priority-medium: #ffae42;
     --priority-low: #4caf50;
@@ -40,11 +39,25 @@ body.light {
     box-sizing: border-box;
 }
 
+#header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#header h1 {
+    font-size: 1.5em;
+    margin: 0;
+}
+
 form {
     display: flex;
     gap: 10px;
     width: 100%;
     margin-bottom: 10px;
+    align-items: center;
 }
 
 #taskInput {
@@ -99,6 +112,18 @@ button:hover {
     background-color: var(--accent-hover);
 }
 
+form button#clearCompleted {
+    background-color: var(--accent);
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+form button#clearCompleted:hover {
+    background-color: var(--accent-hover);
+}
+
 .task {
     display: flex;
     align-items: center;
@@ -108,7 +133,6 @@ button:hover {
     overflow: hidden;
     min-height: 52px;
     padding-right: 10px;
-    padding-left: 10px;
     position: relative;
     transition: transform 0.2s ease, opacity 0.2s ease;
     animation: fadeInSlide 0.2s ease;
@@ -185,31 +209,19 @@ body.light .task {
 }
 
 #bulk-controls {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 10px;
+    display: none;
+    /* now obsolete */
 }
 
-#bulk-controls button {
+#themeToggle {
     background: transparent;
     border: none;
-    font-size: 1.4em;
-    color: var(--text-light);
     cursor: pointer;
-    padding: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-#bulk-controls button:hover {
-    background-color: var(--danger);
-    border-radius: var(--radius);
-}
-
-/* Shared icon styles */
 #themeToggle img,
 #clearCompleted img,
 .delete-btn img {
@@ -223,28 +235,6 @@ body.light #themeToggle img,
 body.light #clearCompleted img,
 body.light .delete-btn img {
     filter: none;
-}
-
-#themeToggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background-color: var(--bg-medium);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-    cursor: pointer;
-    border: none;
-    z-index: 100;
-    transition: background-color 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-body.light #themeToggle {
-    background-color: var(--bg-light-medium);
 }
 
 .task.selected {
