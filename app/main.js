@@ -100,3 +100,9 @@ ipcMain.handle("import-tasks", async () => {
 ipcMain.handle("clear-tasks", () => {
   saveTasks([]);
 });
+
+ipcMain.on("open-devtools", () => {
+  BrowserWindow.getFocusedWindow()?.webContents.openDevTools({
+    mode: "detach",
+  });
+});

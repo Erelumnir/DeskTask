@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld("electron", {
 });
 
 contextBridge.exposeInMainWorld("electronAPI", {
+  openDevTools: () => ipcRenderer.send("open-devtools"),
   exportTasks: (tasks) => ipcRenderer.invoke("export-tasks", tasks),
   importTasks: () => ipcRenderer.invoke("import-tasks"),
   clearTasks: () => ipcRenderer.invoke("clear-tasks"),

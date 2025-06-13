@@ -327,3 +327,35 @@ function showToast(message, duration = 2500) {
 }
 
 // Hotkeys
+document.addEventListener("keydown", (e) => {
+  if (e.ctrlKey && e.key === "n") {
+    e.preventDefault();
+    taskInput.focus();
+  }
+
+  if (e.ctrlKey && e.shiftKey && e.key === "c") {
+    e.preventDefault();
+    clearCompletedTasks();
+    showToast("Completed tasks cleared.");
+  }
+
+  if (e.ctrlKey && e.key === "e") {
+    e.preventDefault();
+    toggleTheme();
+  }
+
+  if (e.ctrlKey && e.key === "i" && !e.shiftKey) {
+    e.preventDefault();
+    document.getElementById("importTasks").click();
+  }
+
+  if (e.ctrlKey && e.key === "o") {
+    e.preventDefault();
+    document.getElementById("exportTasks").click();
+  }
+
+  if (e.ctrlKey && e.shiftKey && e.key === "I") {
+    e.preventDefault();
+    window.electron?.openDevTools?.(); // if exposed from preload
+  }
+});
