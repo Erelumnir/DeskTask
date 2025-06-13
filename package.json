@@ -26,7 +26,7 @@
     },
     "win": {
       "target": "nsis",
-      "icon": "app/src/favicon_dark.ico"
+      "icon": "app/src/favicon.ico"
     }
   },
   "author": "CodeLore",

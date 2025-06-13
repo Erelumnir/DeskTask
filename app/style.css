@@ -382,6 +382,7 @@ body.light #windowControls button:hover {
     width: 16px;
     height: 16px;
     filter: brightness(0) invert(1);
+    fill: currentColor;
 }
 
 body.light #windowControls button img {

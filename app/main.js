@@ -25,7 +25,7 @@ function createWindow() {
     title: "DeskTask",
     frame: false,
     resizable: true,
-    icon: path.join(__dirname, "src/favicon_dark.ico"),
+    icon: path.join(__dirname, "src/favicon.ico"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       sandbox: false,
