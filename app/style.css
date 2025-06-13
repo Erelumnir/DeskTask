@@ -97,6 +97,21 @@ form select {
     vertical-align: middle;
 }
 
+form button {
+    height: 48px;
+    padding: 0 16px;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius);
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
 button {
     padding: 12px;
     border-radius: var(--radius);
@@ -122,6 +137,17 @@ form button#clearCompleted {
 
 form button#clearCompleted:hover {
     background-color: var(--accent-hover);
+}
+
+form button img {
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+    filter: brightness(0) invert(1);
+}
+
+body.light form button img {
+    filter: none;
 }
 
 .task {
@@ -191,11 +217,24 @@ body.light .task {
 }
 
 .task-name {
-    flex: 1;
-    padding: 0 10px;
-    word-break: break-word;
+    display: inline-block;
+    padding: 0 8px;
     outline: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
     cursor: text;
+    user-select: none;
+}
+
+.task-name:focus {
+    user-select: text;
+    white-space: normal;
+}
+
+.task-spacer {
+    flex: 1;
 }
 
 .delete-btn {
@@ -239,4 +278,26 @@ body.light .delete-btn img {
 
 .task.selected {
     outline: 2px solid var(--accent);
+}
+
+.drag-handle {
+    font-size: 1.1em;
+    padding: 0 8px;
+    margin-left: 10px;
+    cursor: grab;
+    user-select: none;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+}
+
+body.light .drag-handle {
+    color: var(--text-dark);
+}
+
+.task.dragging {
+    opacity: 0.6;
+    transform: scale(1.02);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    z-index: 10;
 }

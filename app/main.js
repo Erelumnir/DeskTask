@@ -20,7 +20,7 @@ function saveTasks(tasks) {
 function createWindow() {
   const win = new BrowserWindow({
     width: 800,
-    height: 600,
+    height: 700,
     title: "DeskTask",
     icon: path.join(__dirname, "src/favicon_dark.ico"),
     webPreferences: {
@@ -29,6 +29,7 @@ function createWindow() {
     },
   });
 
+  win.setMenu(null);
   win.loadFile(path.join(__dirname, "index.html"));
 }
 
