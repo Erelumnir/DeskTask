@@ -62,11 +62,14 @@ form {
 
 #taskInput {
     flex: 1;
-    padding: 12px;
+    height: 48px;
+    padding: 0 12px;
     border-radius: var(--radius);
     border: none;
     background-color: var(--bg-medium);
     color: var(--text-light);
+    font-size: 1em;
+    box-sizing: border-box;
 }
 
 body.light #taskInput {
@@ -90,6 +93,11 @@ select {
     background-position: right 12px center;
     background-size: 10px 6px;
     padding-right: 36px;
+}
+
+form select,
+form button {
+    height: 48px;
 }
 
 form select {
