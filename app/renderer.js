@@ -146,10 +146,14 @@ function createTaskElement(task) {
 }
 
 // Clear completed tasks
-clearCompletedBtn.addEventListener("click", () => {
+function clearCompletedTasks() {
   tasks = tasks.filter((t) => !t.completed);
   saveTasks();
   document.querySelectorAll(".task.completed").forEach((el) => el.remove());
+}
+
+clearCompletedBtn.addEventListener("click", () => {
+  clearCompletedTasks();
 });
 
 // Reorder helpers
@@ -238,11 +242,13 @@ function applyTheme() {
   }
 }
 
-themeToggleBtn.addEventListener("click", () => {
+function toggleTheme() {
   const isLight = document.body.classList.toggle("light");
   localStorage.setItem("theme", isLight ? "light" : "dark");
   themeIcon.src = isLight ? "src/sun.svg" : "src/moon.svg";
-});
+}
+
+themeToggleBtn.addEventListener("click", toggleTheme);
 
 // Initialize
 applyTheme();
@@ -302,7 +308,6 @@ document.getElementById("importTasks").addEventListener("click", async () => {
   }
 });
 
-
 document.getElementById("clearAllTasks").addEventListener("click", () => {
   const confirmClear = confirm("Are you sure you want to clear all tasks?");
   if (confirmClear) {
@@ -328,34 +333,39 @@ function showToast(message, duration = 2500) {
 
 // Hotkeys
 document.addEventListener("keydown", (e) => {
-  if (e.ctrlKey && e.key === "n") {
+  const key = e.key.toLowerCase();
+
+  if (e.ctrlKey && !e.shiftKey && key === "n") {
     e.preventDefault();
     taskInput.focus();
   }
 
-  if (e.ctrlKey && e.shiftKey && e.key === "c") {
+  if (e.ctrlKey && e.shiftKey && key === "c") {
     e.preventDefault();
     clearCompletedTasks();
     showToast("Completed tasks cleared.");
   }
 
-  if (e.ctrlKey && e.key === "e") {
+  if (e.ctrlKey && !e.shiftKey && key === "e") {
     e.preventDefault();
-    toggleTheme();
+    document.body.classList.toggle("light");
+    const isLight = document.body.classList.contains("light");
+    localStorage.setItem("theme", isLight ? "light" : "dark");
+    themeIcon.src = isLight ? "src/sun.svg" : "src/moon.svg";
   }
 
-  if (e.ctrlKey && e.key === "i" && !e.shiftKey) {
+  if (e.ctrlKey && !e.shiftKey && key === "i") {
     e.preventDefault();
     document.getElementById("importTasks").click();
   }
 
-  if (e.ctrlKey && e.key === "o") {
+  if (e.ctrlKey && !e.shiftKey && key === "o") {
     e.preventDefault();
     document.getElementById("exportTasks").click();
   }
 
-  if (e.ctrlKey && e.shiftKey && e.key === "I") {
+  if (e.ctrlKey && e.shiftKey && key === "i") {
     e.preventDefault();
-    window.electron?.openDevTools?.(); // if exposed from preload
+    window.electronAPI?.openDevTools?.();
   }
 });
