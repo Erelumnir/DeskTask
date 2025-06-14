@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.29](https://github.com/Erelumnir/DeskTask/compare/v2.0.28...v2.0.29) (2025-06-14)
+
+
+### Features
+
+* add .dockerignore to exclude unnecessary files from Docker context ([30af722](https://github.com/Erelumnir/DeskTask/commit/30af72216ef41cfa1408dd694eebc4827b40f646))
+* implement Docker-based release workflow and remove Wine installation steps ([818e589](https://github.com/Erelumnir/DeskTask/commit/818e5894e9e13de76933da794331d7f1ea9f8094))
+
 ### [2.0.28](https://github.com/Erelumnir/DeskTask/compare/v2.0.27...v2.0.28) (2025-06-14)
 
 
