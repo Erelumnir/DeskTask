@@ -1,4 +1,4 @@
-name: Build and Publish Release (Ubuntu + Wine)
+name: Build and Publish Release (Docker CI)
 
 on:
   push:
@@ -7,8 +7,12 @@ on:
 
 jobs:
   release:
-    name: Build & Publish DeskTask (Windows via Ubuntu)
+    name: Build & Publish DeskTask
     runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/erelumnir/desk-task-builder:latest  
+
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -22,56 +26,16 @@ jobs:
         with:
           node-version: 22
 
-      - name: 💾 Restore npm cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
-
       - name: 📦 Install Dependencies
         run: npm ci
 
-      - name: 💽 Save npm cache
-        uses: actions/cache/save@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-
-      - name: ⚡ Cache Electron Downloads
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/electron
-          key: electron-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-      - name: ♻️ Cache APT package downloads
-        uses: actions/cache@v4
-        with:
-          path: /var/cache/apt/archives
-          key: apt-packages-${{ runner.os }}-${{ hashFiles('.github/workflows/release.yml') }}
-        
       # 🏗 BUILD
-      - name: 🛠 Install Wine, Mono & NSIS
-        run: |
-          sudo dpkg --add-architecture i386
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            wine64 wine32 mono-devel nsis
-          # Fix for electron-builder: link wine64 as wine
-          if ! command -v wine >/dev/null; then sudo ln -s /usr/bin/wine64 /usr/bin/wine; fi
-
-      - name: 🔍 Verify Wine install
-        run: |
-          wine --version || echo "Wine is still missing!"
-
-      - name: 🧹 Clean Build Output
+      - name: 🧹 Clean dist folder
         run: rm -rf dist
 
-      - name: 🏗 Build DeskTask for Windows & Publish 
+      - name: 🏗 Build DeskTask for Windows & Publish
         run: npx electron-builder --win --x64 --publish always
 
       - name: 📦 Print Release Info
         run: |
-            echo "🚀 Releasing version: ${{ github.ref_name }}"
-    
+          echo "🚀 Releasing version: ${{ github.ref_name }}"
