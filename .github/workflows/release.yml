@@ -55,34 +55,17 @@ jobs:
         shell: bash
         run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
         
-  
-      - name: Upload Setup .exe
-        uses: actions/upload-release-asset@v1
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: |
+            ./dist/DeskTask Setup ${{ env.VERSION }}.exe
+            ./dist/DeskTask Setup ${{ env.VERSION }}.exe.blockmap
+            ./dist/latest.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/DeskTask Setup ${{ env.VERSION }}.exe
-          asset_name: DeskTask Setup ${{ env.VERSION }}.exe
-          asset_content_type: application/octet-stream
-  
-      - name: Upload .blockmap
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url}}
-          asset_path: ./dist/DeskTask ${{ env.VERSION }}.blockmap
-          asset_name: DeskTask ${{ env.VERSION }}.blockmap
-          asset_content_type: application/octet-stream
-  
-      - name: Upload latest.yml
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/latest.yml
-          asset_name: latest.yml
-          asset_content_type: text/yaml
   
