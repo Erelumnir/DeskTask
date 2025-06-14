@@ -7,20 +7,22 @@ on:
 
 jobs:
   release:
+    name: Build & Publish DeskTask (Windows via Ubuntu)
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - name: Checkout repo
+      # 🧰 SETUP
+      - name: 🧾 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: 🧰 Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: Restore npm cache
+      - name: 💾 Restore npm cache
         uses: actions/cache/restore@v4
         with:
           path: ~/.npm
@@ -28,28 +30,34 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-npm-
 
-      - name: Install dependencies
+      - name: 📦 Install Dependencies
         run: npm ci
 
-      - name: Save npm cache
+      - name: 💽 Save npm cache
         uses: actions/cache/save@v4
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
 
-      - name: Cache Electron
+      - name: ⚡ Cache Electron Downloads
         uses: actions/cache@v4
         with:
           path: ~/.cache/electron
           key: electron-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
-      - name: Install Wine, Mono & NSIS
+      # 🏗 BUILD
+      - name: 🛠 Install Wine, Mono & NSIS
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends wine64 mono-devel nsis
 
-      - name: Clean dist
+      - name: 🧹 Clean Build Output
         run: rm -rf dist
 
-      - name: Build App (Win x64)
+      - name: 🏗 Build DeskTask for Windows & Publish
         run: npx electron-builder --win --x64 --publish always
+
+      - name: 📦 Print Release Info
+        run: |
+            echo "🚀 Releasing version: ${{ github.ref_name }}"
+    
