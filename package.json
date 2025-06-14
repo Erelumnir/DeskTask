@@ -46,5 +46,10 @@
     }
   },
   "author": "CodeLore",
-  "license": "ISC"
+  "license": "ISC",
+  "engines": {
+    "node": "22.x",
+    "npm": "10.x",
+    "electron": "36.x"
+  }
 }

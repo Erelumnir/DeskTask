@@ -1,9 +1,9 @@
 # Node.js dependencies
 node_modules/
 
-# Optional npm package lock file
-package-lock.json
-yarn.lock
+# # Optional npm package lock file
+# package-lock.json
+# yarn.lock
 
 # Logs
 logs
