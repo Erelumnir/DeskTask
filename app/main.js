@@ -126,3 +126,7 @@ ipcMain.handle("get-app-version", () => {
 ipcMain.on("quit-and-install", () => {
   autoUpdater.quitAndInstall();
 });
+
+autoUpdater.on("update-available", () => console.log("🔄 Update available"));
+autoUpdater.on("update-downloaded", () => console.log("✅ Update downloaded"));
+autoUpdater.on("error", (err) => console.error("❌ Auto-update error:", err));
