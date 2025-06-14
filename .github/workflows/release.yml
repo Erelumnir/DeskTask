@@ -25,6 +25,20 @@ jobs:
         with:
           node-version: 22
 
+      - name: 🧱 Cache Electron binaries
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/electron
+            ~/.cache/electron-builder
+          key: electron-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+        
+      - name: 📦 Restore npm cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          
       - name: 📦 Install Dependencies
         run: npm ci
 
