@@ -34,7 +34,7 @@ jobs:
             ${{ runner.os }}-node-
           
       - name: Install dependencies (if not cached)
-        run: npm ci
+        run: npm install
 
       - name: Build and Publish
         run: npx electron-builder --win --publish always

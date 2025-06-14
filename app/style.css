@@ -336,10 +336,13 @@ body.light #titlebar {
 }
 
 #appTitle {
-    padding: 0 12px;
+    padding: 0 16px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    font-size: 1rem;
+    color: var(--text-light);
+    user-select: none;
 }
 
 #appTitle img {
