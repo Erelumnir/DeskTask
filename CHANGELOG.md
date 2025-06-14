@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.22](https://github.com/Erelumnir/DeskTask/compare/v2.0.21...v2.0.22) (2025-06-14)
+
+
+### Bug Fixes
+
+* streamline environment variable usage in release workflow ([61b9d1f](https://github.com/Erelumnir/DeskTask/commit/61b9d1fbe1e2d09bbb7c578a79daa26055e84c90))
+
 ### [2.0.21](https://github.com/Erelumnir/DeskTask/compare/v2.0.20...v2.0.21) (2025-06-14)
 
 
