@@ -28,6 +28,13 @@
     "win": {
       "target": "nsis",
       "icon": "app/src/favicon.ico"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "Erelumnir",
+      "repo": "DeskTask",
+      "releaseType": "release",
+      "private": true
     }
   },
   "author": "CodeLore",
