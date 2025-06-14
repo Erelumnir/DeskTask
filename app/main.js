@@ -42,15 +42,15 @@ app.whenReady().then(() => {
   createWindow();
 
   const token = process.env.GH_UPDATER_TOKEN;
+  const version = app.getVersion();
 
   if (token) {
     autoUpdater.setFeedURL({
-      provider: "github",
-      owner: "Erelumnir",
-      repo: "DeskTask",
-      private: true,
-      token,
+      provider: "generic",
+      url: `https://${token}@github.com/Erelumnir/DeskTask/releases/download/v${version}/`,
     });
+
+    autoUpdater.checkForUpdatesAndNotify();
   } else {
     console.warn("⚠️ GH_UPDATER_TOKEN not set. Skipping auto-update.");
   }
