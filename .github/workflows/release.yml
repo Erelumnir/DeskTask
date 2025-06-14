@@ -16,6 +16,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+
+      - name: Cache npm download cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
       
       - name: Cache node_modules
         uses: actions/cache@v4
@@ -25,7 +33,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
           
-      - name: Install dependencies
+      - name: Install dependencies (if not cached)
         run: npm ci
 
       - name: Build and Publish
