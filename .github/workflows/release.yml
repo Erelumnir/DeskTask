@@ -26,14 +26,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-npm-
 
-      - name: Cache node_modules
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-modules-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-modules-
-
       - name: Install dependencies
         run: npm ci
 
