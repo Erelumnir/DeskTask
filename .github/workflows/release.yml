@@ -14,7 +14,8 @@ jobs:
       image: ghcr.io/erelumnir/desk-task-builder:latest
       credentials:
         username: Erelumnir
-        password: ${{ secrets.GHCR_PAT }}  
+        password: ${{ secrets.GHCR_PAT }}
+      options: --platform linux/amd64
 
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
