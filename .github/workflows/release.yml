@@ -1,4 +1,4 @@
-name: Build and Publish Release (Official Builder Image)
+name: Build and Publish Release
 
 on:
   push:
@@ -33,6 +33,8 @@ jobs:
 
       - name: 🏗 Build DeskTask for Windows & Publish
         run: npx electron-builder --win --x64 --publish always
+        env:
+          WINEPREFIX: /tmp/wine
 
       - name: 📦 Print Release Info
         run: |
