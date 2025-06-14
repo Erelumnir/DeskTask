@@ -1,4 +1,4 @@
-name: Build and Publish Release (Ubuntu + Wine)
+name: Build and Publish Release
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -43,16 +43,12 @@ jobs:
           path: ~/.cache/electron
           key: electron-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
-      - name: Install Wine, Mono & NSIS
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends wine64 mono-devel nsis
-
       - name: Clean dist
         run: rm -rf dist
+        shell: bash
 
-      - name: Build App (Win x64)
-        run: npx electron-builder --win --x64 --publish always --dry-run
+      - name: Build App
+        run: npx electron-builder --win --publish always
 
       - name: Extract version from tag
         shell: bash
@@ -69,3 +65,5 @@ jobs:
             ./dist/DeskTask Setup ${{ env.VERSION }}.exe
             ./dist/DeskTask Setup ${{ env.VERSION }}.exe.blockmap
             ./dist/latest.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
