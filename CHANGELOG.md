@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.5](https://github.com/Erelumnir/DeskTask/compare/v2.0.4...v2.0.5) (2025-06-14)
+
+
+### Bug Fixes
+
+* update padding and gap in #appTitle for improved layout ([263c492](https://github.com/Erelumnir/DeskTask/commit/263c492dc71165d2f1c468f2103bb019e1deb2c4))
+
 ### [2.0.4](https://github.com/Erelumnir/DeskTask/compare/v2.0.3...v2.0.4) (2025-06-14)
 
 ### [2.0.3](https://github.com/Erelumnir/DeskTask/compare/v2.0.2...v2.0.3) (2025-06-14)
