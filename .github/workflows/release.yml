@@ -16,11 +16,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-
+      
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+          
       - name: Install dependencies
         run: npm install
 
       - name: Build and Publish
-        run: npx electron-builder --publish always
+        run: npx electron-builder --win --publish always
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
