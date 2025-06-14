@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.21](https://github.com/Erelumnir/DeskTask/compare/v2.0.20...v2.0.21) (2025-06-14)
+
+
+### Bug Fixes
+
+* update publish setting to always and clean dist before build ([7d7d288](https://github.com/Erelumnir/DeskTask/commit/7d7d288c8b4d25bff74e2c121037653bff14a88f))
+
 ### [2.0.20](https://github.com/Erelumnir/DeskTask/compare/v2.0.19...v2.0.20) (2025-06-14)
 
 ### [2.0.19](https://github.com/Erelumnir/DeskTask/compare/v2.0.18...v2.0.19) (2025-06-14)
