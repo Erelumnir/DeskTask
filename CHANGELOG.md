@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.7](https://github.com/Erelumnir/DeskTask/compare/v2.0.6...v2.0.7) (2025-06-14)
+
+
+### Bug Fixes
+
+* update caching strategy for npm and node_modules in release workflow ([1dbaf3f](https://github.com/Erelumnir/DeskTask/commit/1dbaf3f2442b0fab2dc7f5d9a90f6c553b44375f))
+
 ### [2.0.6](https://github.com/Erelumnir/DeskTask/compare/v2.0.5...v2.0.6) (2025-06-14)
 
 
