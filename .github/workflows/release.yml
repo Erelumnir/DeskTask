@@ -1,4 +1,4 @@
-name: Build and Publish Release (Docker CI)
+name: Build and Publish Release (Official Builder Image)
 
 on:
   push:
@@ -11,17 +11,12 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/erelumnir/desk-task-builder:latest
-      credentials:
-        username: Erelumnir
-        password: ${{ secrets.GHCR_PAT }}
-      options: --platform linux/amd64
+      image: electronuserland/builder:wine
 
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      # 🧰 SETUP
       - name: 🧾 Checkout Repository
         uses: actions/checkout@v4
 
@@ -33,7 +28,6 @@ jobs:
       - name: 📦 Install Dependencies
         run: npm ci
 
-      # 🏗 BUILD
       - name: 🧹 Clean dist folder
         run: rm -rf dist
 
@@ -42,4 +36,4 @@ jobs:
 
       - name: 📦 Print Release Info
         run: |
-          echo "🚀 Releasing version: ${{ github.ref_name }}"
+          echo "✅ Finished release: ${{ github.ref_name }}"
