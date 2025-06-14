@@ -1,6 +1,6 @@
 {
   "name": "todo-app",
-  "version": "2.0.15",
+  "version": "2.0.16",
   "description": "A simple tasks tracker.",
   "main": "app/main.js",
   "scripts": {
@@ -13,7 +13,7 @@
     "release:minor": "standard-version --release-as minor && npm run tag:sign && npm run push-release",
     "release:major": "standard-version --release-as major && npm run tag:sign && npm run push-release",
     "tag:sign": "node scripts/sign-tag.js",
-    "push-release": "git push origin main --follow-tags"
+    "push-release": "git push --follow-tags"
   },
   "dependencies": {
     "auto-launch": "^5.0.0",
