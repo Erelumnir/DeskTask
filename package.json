@@ -7,7 +7,11 @@
     "start": "electron .",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
-    "release": "dotenv electron-builder --publish always" 
+    "release:old": "dotenv electron-builder --publish always",
+    "release:patch": "npm version patch && git push --follow-tags",
+    "release:minor": "npm version minor && git push --follow-tags",
+    "release:major": "npm version major && git push --follow-tags",
+    "release": "npm run release:patch"
   },
   "dependencies": {
     "auto-launch": "^5.0.0",
