@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.6](https://github.com/Erelumnir/DeskTask/compare/v2.0.5...v2.0.6) (2025-06-14)
+
+
+### Bug Fixes
+
+* change runner environment from ubuntu to windows for release workflow ([d46fa44](https://github.com/Erelumnir/DeskTask/commit/d46fa442fca75a729f89edbf7b98c0651e678ebe))
+
 ### [2.0.5](https://github.com/Erelumnir/DeskTask/compare/v2.0.4...v2.0.5) (2025-06-14)
 
 
