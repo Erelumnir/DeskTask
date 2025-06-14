@@ -6,13 +6,15 @@
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "release": "dotenv electron-builder --publish always" 
   },
   "dependencies": {
     "auto-launch": "^5.0.0",
     "electron-updater": "^6.6.2"
   },
   "devDependencies": {
+    "dotenv-cli": "^8.0.0",
     "electron": "^24.0.0",
     "electron-builder": "^26.0.12"
   },
