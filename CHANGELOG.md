@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.37](https://github.com/Erelumnir/DeskTask/compare/v2.0.36...v2.0.37) (2025-06-14)
+
+
+### Features
+
+* add GH_UPDATER_TOKEN for auto-updater and improve update handling ([32ae1f8](https://github.com/Erelumnir/DeskTask/commit/32ae1f8f0ce7eab5303e462104082f54c3f9f919))
+
 ### [2.0.36](https://github.com/Erelumnir/DeskTask/compare/v2.0.35...v2.0.36) (2025-06-14)
 
 ### [2.0.35](https://github.com/Erelumnir/DeskTask/compare/v2.0.34...v2.0.35) (2025-06-14)
