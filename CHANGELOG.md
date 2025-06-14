@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.30](https://github.com/Erelumnir/DeskTask/compare/v2.0.29...v2.0.30) (2025-06-14)
+
+
+### Bug Fixes
+
+* add credentials section for Docker container in release workflow ([70ce124](https://github.com/Erelumnir/DeskTask/commit/70ce124d36abe3bbfb16764b1cb69ab3680423e2))
+
 ### [2.0.29](https://github.com/Erelumnir/DeskTask/compare/v2.0.28...v2.0.29) (2025-06-14)
 
 
