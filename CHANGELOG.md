@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.11](https://github.com/Erelumnir/DeskTask/compare/v2.0.10...v2.0.11) (2025-06-14)
+
+
+### Features
+
+* streamline release asset uploads using softprops/action-gh-release ([12679df](https://github.com/Erelumnir/DeskTask/commit/12679df6221b08a250d9fedaf34d4028dd378341))
+
 ### [2.0.10](https://github.com/Erelumnir/DeskTask/compare/v2.0.9...v2.0.10) (2025-06-14)
 
 
