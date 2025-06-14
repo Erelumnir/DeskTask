@@ -49,6 +49,7 @@ jobs:
         run: npx electron-builder --win --x64 --publish always
         env:
           WINEPREFIX: /tmp/wine
+          GH_UPDATER_TOKEN: ${{ secrets.GH_UPDATER_TOKEN }}
 
       - name: 📦 Print Release Info
         run: |

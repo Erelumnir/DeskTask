@@ -1,7 +1,9 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
-const { autoUpdater } = require("electron-updater");
 const path = require("path");
 const fs = require("fs");
+require("dotenv").config();
+const { autoUpdater } = require("electron-updater");
+const { dialog } = require("electron");
 
 const tasksPath = path.join(app.getPath("userData"), "tasks.json");
 
@@ -38,15 +40,34 @@ function createWindow() {
 
 app.whenReady().then(() => {
   createWindow();
+
+  const token = process.env.GH_UPDATER_TOKEN;
+
+  if (token) {
+    autoUpdater.setFeedURL({
+      provider: "github",
+      owner: "Erelumnir",
+      repo: "DeskTask",
+      private: true,
+      token,
+    });
+  } else {
+    console.warn("⚠️ GH_UPDATER_TOKEN not set. Skipping auto-update.");
+  }
+
+  autoUpdater.on("error", (err) => console.error("❌ Update error:", err));
+  autoUpdater.on("update-available", () => console.log("🔄 Update available"));
+  autoUpdater.on("update-not-available", () =>
+    console.log("✅ No updates available")
+  );
+  autoUpdater.on("download-progress", (progress) =>
+    console.log(`⬇️ Downloading: ${Math.round(progress.percent)}%`)
+  );
+  autoUpdater.on("update-downloaded", () =>
+    console.log("✅ Update downloaded. Will install on quit.")
+  );
+
   autoUpdater.checkForUpdatesAndNotify();
-
-  autoUpdater.on("update-available", () => {
-    BrowserWindow.getFocusedWindow()?.webContents.send("update-available");
-  });
-
-  autoUpdater.on("update-downloaded", () => {
-    BrowserWindow.getFocusedWindow()?.webContents.send("update-downloaded");
-  });
 });
 
 app.on("window-all-closed", () => {
@@ -70,7 +91,6 @@ ipcMain.on("delete-task", (event, id) => {
   event.reply("tasks", tasks);
 });
 
-//<!-- Window Controls -->
 ipcMain.on("window-minimize", () => {
   BrowserWindow.getFocusedWindow()?.minimize();
 });
@@ -84,9 +104,6 @@ ipcMain.on("window-maximize", () => {
 ipcMain.on("window-close", () => {
   BrowserWindow.getFocusedWindow()?.close();
 });
-
-// Menu handlers
-const { dialog } = require("electron");
 
 ipcMain.handle("export-tasks", async (event, tasks) => {
   const { filePath } = await dialog.showSaveDialog({
@@ -118,7 +135,6 @@ ipcMain.on("open-devtools", () => {
   });
 });
 
-// Versioning and updates
 ipcMain.handle("get-app-version", () => {
   return app.getVersion();
 });
@@ -126,7 +142,3 @@ ipcMain.handle("get-app-version", () => {
 ipcMain.on("quit-and-install", () => {
   autoUpdater.quitAndInstall();
 });
-
-autoUpdater.on("update-available", () => console.log("🔄 Update available"));
-autoUpdater.on("update-downloaded", () => console.log("✅ Update downloaded"));
-autoUpdater.on("error", (err) => console.error("❌ Auto-update error:", err));

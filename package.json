@@ -35,7 +35,8 @@
     },
     "win": {
       "target": "nsis",
-      "icon": "app/src/favicon.ico"
+      "icon": "app/src/favicon.ico",
+      "artifactName": "DeskTask-Setup-${version}.${ext}"
     },
     "publish": {
       "provider": "github",
