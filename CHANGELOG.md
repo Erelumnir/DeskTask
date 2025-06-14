@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.10](https://github.com/Erelumnir/DeskTask/compare/v2.0.9...v2.0.10) (2025-06-14)
+
+
+### Features
+
+* enhance release workflow with version extraction and asset uploads ([007fe1c](https://github.com/Erelumnir/DeskTask/commit/007fe1ceb352fbc59807db38cfdf50a95d933c5d))
+
 ### [2.0.9](https://github.com/Erelumnir/DeskTask/compare/v2.0.8...v2.0.9) (2025-06-14)
 
 
