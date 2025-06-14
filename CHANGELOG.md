@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.31](https://github.com/Erelumnir/DeskTask/compare/v2.0.30...v2.0.31) (2025-06-14)
+
+
+### Features
+
+* add Dockerfile and GitHub Actions workflow for building and pushing Docker images ([f94fbb9](https://github.com/Erelumnir/DeskTask/commit/f94fbb923550675ee877f2b1a1815d9a3b048c6b))
+
+
+### Bug Fixes
+
+* correct indentation in release workflow credentials section ([4590451](https://github.com/Erelumnir/DeskTask/commit/4590451786b8c3ed6e1af24cf3cae438abae007b))
+
 ### [2.0.30](https://github.com/Erelumnir/DeskTask/compare/v2.0.29...v2.0.30) (2025-06-14)
 
 
