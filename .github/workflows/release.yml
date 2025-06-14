@@ -50,7 +50,7 @@ jobs:
         with:
           path: /var/cache/apt/archives
           key: apt-packages-${{ runner.os }}-${{ hashFiles('.github/workflows/release.yml') }}
-
+        
       # 🏗 BUILD
       - name: 🛠 Install Wine, Mono & NSIS
         run: |
@@ -58,7 +58,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             wine64 wine32 mono-devel nsis
-          sudo ln -s /usr/bin/wine64 /usr/bin/wine
+          # Fix for electron-builder: link wine64 as wine
+          if ! command -v wine >/dev/null; then sudo ln -s /usr/bin/wine64 /usr/bin/wine; fi
+
+      - name: 🔍 Verify Wine install
+        run: |
+          wine --version || echo "Wine is still missing!"
 
       - name: 🧹 Clean Build Output
         run: rm -rf dist
