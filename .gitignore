@@ -38,3 +38,5 @@ coverage/
 
 # Optional npm debug file
 npm-debug.log*
+
+scripts/

@@ -8,11 +8,14 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "release:old": "dotenv electron-builder --publish always",
-    "release": "standard-version",
-    "release:patch": "standard-version --release-as patch",
-    "release:minor": "standard-version --release-as minor",
-    "release:major": "standard-version --release-as major",
-    "push-release": "git push --follow-tags"
+    
+    "release": "npm run release:patch",
+    "release:patch": "standard-version --release-as patch && npm run tag:sign && npm run push-release",
+    "release:minor": "standard-version --release-as minor && npm run tag:sign && npm run push-release",
+    "release:major": "standard-version --release-as major && npm run tag:sign && npm run push-release",
+
+    "tag:sign": "node scripts/sign-tag.js",
+    "push-release": "git push origin main --follow-tags"
   },
   "dependencies": {
     "auto-launch": "^5.0.0",
