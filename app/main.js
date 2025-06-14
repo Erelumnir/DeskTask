@@ -1,5 +1,5 @@
-// app/main.js
 const { app, BrowserWindow, ipcMain } = require("electron");
+const { autoUpdater } = require("electron-updater");
 const path = require("path");
 const fs = require("fs");
 
@@ -36,7 +36,18 @@ function createWindow() {
   win.loadFile(path.join(__dirname, "index.html"));
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  createWindow();
+  autoUpdater.checkForUpdatesAndNotify();
+
+  autoUpdater.on("update-available", () => {
+    BrowserWindow.getFocusedWindow()?.webContents.send("update-available");
+  });
+
+  autoUpdater.on("update-downloaded", () => {
+    BrowserWindow.getFocusedWindow()?.webContents.send("update-downloaded");
+  });
+});
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
@@ -105,4 +116,13 @@ ipcMain.on("open-devtools", () => {
   BrowserWindow.getFocusedWindow()?.webContents.openDevTools({
     mode: "detach",
   });
+});
+
+// Versioning and updates
+ipcMain.handle("get-app-version", () => {
+  return app.getVersion();
+});
+
+ipcMain.on("quit-and-install", () => {
+  autoUpdater.quitAndInstall();
 });

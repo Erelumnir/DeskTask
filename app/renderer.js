@@ -331,6 +331,16 @@ function showToast(message, duration = 2500) {
   }, duration);
 }
 
+// Update events
+window.addEventListener("update-available", () => {
+  showToast("🔄 Update available. Downloading...");
+});
+
+window.addEventListener("update-downloaded", () => {
+  showToast("✅ Update downloaded. Restart to apply.");
+});
+
+
 // Hotkeys
 document.addEventListener("keydown", (e) => {
   const key = e.key.toLowerCase();
@@ -369,3 +379,27 @@ document.addEventListener("keydown", (e) => {
     window.electronAPI?.openDevTools?.();
   }
 });
+
+// Version display
+document.addEventListener("DOMContentLoaded", () => {
+  const versionDisplay = document.getElementById("appVersion");
+  if (versionDisplay) {
+    window.electronAPI.getAppVersion().then((version) => {
+      versionDisplay.textContent = version;
+    });
+  }
+});
+
+// Update button
+const applyUpdateBtn = document.getElementById("applyUpdateBtn");
+
+window.addEventListener("update-downloaded", () => {
+  showToast("✅ Update downloaded. Restart to apply.");
+  applyUpdateBtn.hidden = false;
+});
+
+applyUpdateBtn.addEventListener("click", () => {
+  window.electronAPI?.quitAndInstall?.();
+});
+
+
