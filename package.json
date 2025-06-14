@@ -1,6 +1,6 @@
 {
   "name": "todo-app",
-  "version": "2.0.12",
+  "version": "2.0.13",
   "description": "A simple tasks tracker.",
   "main": "app/main.js",
   "scripts": {
@@ -8,12 +8,10 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "release:old": "dotenv electron-builder --publish always",
-    
     "release": "npm run release:patch",
     "release:patch": "standard-version --release-as patch && npm run tag:sign && npm run push-release",
     "release:minor": "standard-version --release-as minor && npm run tag:sign && npm run push-release",
     "release:major": "standard-version --release-as major && npm run tag:sign && npm run push-release",
-
     "tag:sign": "node scripts/sign-tag.js",
     "push-release": "git push origin main --follow-tags"
   },
