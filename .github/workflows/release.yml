@@ -11,7 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/erelumnir/desk-task-builder:latest  
+      image: ghcr.io/erelumnir/desk-task-builder:latest
+      credentials:
+        username: Erelumnir
+        password: ${{ secrets.GHCR_PAT }}  
 
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
