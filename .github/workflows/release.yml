@@ -45,16 +45,25 @@ jobs:
           path: ~/.cache/electron
           key: electron-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
+      - name: ♻️ Cache APT package downloads
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          key: apt-packages-${{ runner.os }}-${{ hashFiles('.github/workflows/release.yml') }}
+
       # 🏗 BUILD
       - name: 🛠 Install Wine, Mono & NSIS
         run: |
+          sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends wine64 mono-devel nsis
+          sudo apt-get install -y --no-install-recommends \
+            wine64 wine32 mono-devel nsis
+          sudo ln -s /usr/bin/wine64 /usr/bin/wine
 
       - name: 🧹 Clean Build Output
         run: rm -rf dist
 
-      - name: 🏗 Build DeskTask for Windows & Publish
+      - name: 🏗 Build DeskTask for Windows & Publish 
         run: npx electron-builder --win --x64 --publish always
 
       - name: 📦 Print Release Info
