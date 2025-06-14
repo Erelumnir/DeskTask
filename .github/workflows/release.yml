@@ -35,8 +35,12 @@ jobs:
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
 
+      - name: Clean dist
+        run: rm -rf dist
+        shell: bash
+
       - name: Build App
-        run: npx electron-builder --win --publish never
+        run: npx electron-builder --win --publish always
 
       - name: Extract version from tag
         shell: bash
@@ -55,3 +59,4 @@ jobs:
             ./dist/latest.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
