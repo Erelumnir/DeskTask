@@ -8,10 +8,11 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "release:old": "dotenv electron-builder --publish always",
-    "release:patch": "npm version patch && git push --follow-tags",
-    "release:minor": "npm version minor && git push --follow-tags",
-    "release:major": "npm version major && git push --follow-tags",
-    "release": "npm run release:patch"
+    "release": "standard-version",
+    "release:patch": "standard-version --release-as patch",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "push-release": "git push --follow-tags"
   },
   "dependencies": {
     "auto-launch": "^5.0.0",
@@ -20,7 +21,8 @@
   "devDependencies": {
     "dotenv-cli": "^8.0.0",
     "electron": "^24.0.0",
-    "electron-builder": "^26.0.12"
+    "electron-builder": "^26.0.12",
+    "standard-version": "^9.5.0"
   },
   "build": {
     "appId": "com.example.todoapp",
