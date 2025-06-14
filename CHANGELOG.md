@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.40](https://github.com/Erelumnir/DeskTask/compare/v2.0.39...v2.0.40) (2025-06-14)
+
+
+### Bug Fixes
+
+* add restore-keys for electron and npm cache steps ([bb461f3](https://github.com/Erelumnir/DeskTask/commit/bb461f3525b5e7418f466a97fad495068af6638d))
+* update autoUpdater feed URL to use generic provider with token-based authentication ([15374b0](https://github.com/Erelumnir/DeskTask/commit/15374b015c11a456450bd308cabb2d425efa970d))
+
 ### [2.0.39](https://github.com/Erelumnir/DeskTask/compare/v2.0.38...v2.0.39) (2025-06-14)
 
 ### [2.0.38](https://github.com/Erelumnir/DeskTask/compare/v2.0.37...v2.0.38) (2025-06-14)
