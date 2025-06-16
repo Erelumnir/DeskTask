@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/Erelumnir/DeskTask/compare/v2.0.41...v2.1.0) (2025-06-16)
+
+
+### Features
+
+* implement tab management with dynamic task organization and modal support ([45e44ed](https://github.com/Erelumnir/DeskTask/commit/45e44ed457a0865b5fbb07bf2be6d62801d9e0b2))
+
+
+### Bug Fixes
+
+* add .zip files to .gitignore ([c1b9cf3](https://github.com/Erelumnir/DeskTask/commit/c1b9cf333fc4480f9261e342f7de9439aa486d33))
+
 ### [2.0.41](https://github.com/Erelumnir/DeskTask/compare/v2.0.40...v2.0.41) (2025-06-14)
 
 ### [2.0.40](https://github.com/Erelumnir/DeskTask/compare/v2.0.39...v2.0.40) (2025-06-14)
