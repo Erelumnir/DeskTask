@@ -4,29 +4,188 @@ const prioritySelect = document.getElementById("prioritySelect");
 const taskList = document.getElementById("taskList");
 const clearCompletedBtn = document.getElementById("clearCompleted");
 
-let tasks = [];
+let tasksByTab = {};
+let activeTab = localStorage.getItem("activeTab") || "Tasks";
+
+const tabBar = document.getElementById("tab-bar");
+const addTabBtn = document.getElementById("add-tab");
+
+function renderTabs() {
+  const oldTabs = [...tabBar.querySelectorAll(".tab")];
+  oldTabs.forEach((tab) => tab.remove());
+
+  Object.keys(tasksByTab).forEach((tabName) => {
+    const tabBtn = document.createElement("button");
+    tabBtn.classList.add("tab");
+    if (tabName === activeTab) tabBtn.classList.add("active");
+
+    const span = document.createElement("span");
+    span.textContent = tabName;
+    span.className = "tab-label";
+    span.onclick = () => startTabEdit(tabName, span);
+
+    tabBtn.onclick = (e) => {
+      if (e.target.classList.contains("tab-label")) return;
+      activeTab = tabName;
+      localStorage.setItem("activeTab", activeTab);
+      renderTabs();
+      renderTasks();
+    };
+
+    tabBtn.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      showTabContextMenu(tabName, tabBtn);
+    });
+
+    tabBtn.appendChild(span);
+    tabBar.insertBefore(tabBtn, addTabBtn);
+  });
+}
+
+function startTabEdit(oldName, spanElement) {
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = oldName;
+  input.className = "tab-edit";
+
+  // Match width of existing label
+  const labelWidth = spanElement.offsetWidth + 12; // add padding
+  input.style.width = `${labelWidth}px`;
+
+  input.onblur = finish;
+  input.onkeydown = (e) => {
+    if (e.key === "Enter") finish();
+    if (e.key === "Escape") cancel();
+  };
+
+  spanElement.replaceWith(input);
+  input.focus();
+  input.select();
+
+  function finish() {
+    const newName = input.value.trim();
+    if (!newName || newName === oldName || tasksByTab[newName]) {
+      cancel();
+      return;
+    }
+    tasksByTab[newName] = tasksByTab[oldName];
+    delete tasksByTab[oldName];
+    if (activeTab === oldName) activeTab = newName;
+    localStorage.setItem("activeTab", activeTab);
+    saveTasks();
+    renderTabs();
+    renderTasks();
+  }
+
+  function cancel() {
+    input.replaceWith(spanElement);
+  }
+}
+
+function showTabContextMenu(tabName, anchor) {
+  document.querySelectorAll(".tab-context-menu").forEach((m) => m.remove());
+
+  const menu = document.createElement("div");
+  menu.className = "tab-context-menu popup";
+  menu.style.position = "fixed";
+
+  const del = document.createElement("button");
+  del.textContent = "Delete";
+  del.onclick = () => {
+    const confirmDelete = confirm(`Delete tab "${tabName}" and its tasks?`);
+    if (!confirmDelete) return;
+
+    delete tasksByTab[tabName];
+
+    const remainingTabs = Object.keys(tasksByTab);
+    if (remainingTabs.length === 0) {
+      tasksByTab["Tasks"] = [];
+      activeTab = "Tasks";
+    } else if (activeTab === tabName) {
+      activeTab = remainingTabs[0];
+    }
+
+    localStorage.setItem("activeTab", activeTab);
+    saveTasks();
+    renderTabs();
+    renderTasks();
+
+    taskInput.disabled = false;
+    taskInput.placeholder = "Add a new task...";
+    taskInput.focus();
+
+    menu.remove();
+  };
+
+  menu.appendChild(del);
+
+  const rect = anchor.getBoundingClientRect();
+  menu.style.left = `${rect.left}px`;
+  menu.style.top = `${rect.bottom + 5}px`;
+  menu.style.zIndex = "9999";
+
+  document.body.appendChild(menu);
+  document.addEventListener("click", () => menu.remove(), { once: true });
+}
+
+addTabBtn.onclick = () => {
+  document.getElementById("newTabModal").classList.remove("hidden");
+  document.getElementById("newTabName").value = "";
+  document.getElementById("newTabName").focus();
+};
+
+document.getElementById("confirmNewTab").onclick = () => {
+  const name = document.getElementById("newTabName").value.trim();
+  if (!name || tasksByTab[name]) return;
+
+  tasksByTab[name] = [];
+  activeTab = name;
+  localStorage.setItem("activeTab", name);
+  renderTabs();
+  renderTasks();
+  saveTasks();
+
+  // Hide modal & restore state
+  const modal = document.getElementById("newTabModal");
+  modal.classList.add("hidden");
+  document.body.style.overflow = ""; // restore scroll if disabled
+  taskInput.disabled = false;
+  taskInput.focus();
+};
+
+document.getElementById("cancelNewTab").onclick = () => {
+  document.getElementById("newTabModal").classList.add("hidden");
+  document.body.style.overflow = "";
+  taskInput.disabled = false;
+};
 
 // Load
 async function loadTasks() {
   let saved = await window.electron.getTasks();
 
-  // Fallback: migrate from localStorage if file is empty
-  if (!saved || saved.length === 0) {
+  if (!saved || Object.keys(saved).length === 0) {
     const legacy = localStorage.getItem("tasks");
     if (legacy) {
-      saved = JSON.parse(legacy);
-      window.electron.saveTasks(saved); // persist to file
-      localStorage.removeItem("tasks"); // optional cleanup
+      const migrated = JSON.parse(legacy);
+      saved = { [activeTab]: migrated };
+      window.electron.saveTasks(saved);
+      localStorage.removeItem("tasks");
     }
   }
 
-  tasks = Array.isArray(saved) ? saved : [];
+  tasksByTab =
+    typeof saved === "object" && !Array.isArray(saved)
+      ? saved
+      : { [activeTab]: saved || [] };
+  if (!tasksByTab[activeTab]) tasksByTab[activeTab] = [];
+
+  renderTabs();
   renderTasks();
 }
 
 // Save
 function saveTasks() {
-  window.electron.saveTasks(tasks);
+  window.electron.saveTasks(tasksByTab);
 }
 
 // Add new task
@@ -43,7 +202,7 @@ taskForm.addEventListener("submit", (e) => {
     completed: false,
   };
 
-  tasks.push(newTask);
+  tasksByTab[activeTab].push(newTask);
   taskInput.value = "";
   taskList.appendChild(createTaskElement(newTask));
   saveTasks();
@@ -51,8 +210,17 @@ taskForm.addEventListener("submit", (e) => {
 
 // Render all tasks (initial load or reorder)
 function renderTasks() {
+  if (!tasksByTab[activeTab]) {
+    const fallbackTab = Object.keys(tasksByTab)[0];
+    if (fallbackTab) {
+      activeTab = fallbackTab;
+      localStorage.setItem("activeTab", activeTab);
+    }
+  }
+
   taskList.innerHTML = "";
-  tasks.forEach((task) => {
+  const currentTasks = tasksByTab[activeTab] || [];
+  currentTasks.forEach((task) => {
     const el = createTaskElement(task);
     taskList.appendChild(el);
   });
@@ -66,11 +234,9 @@ function createTaskElement(task) {
   }-priority`;
   div.dataset.dragId = task.id;
 
-  // Marker for visual indication
   const marker = document.createElement("div");
   marker.className = "marker";
 
-  // Drag handle for reordering
   const handle = document.createElement("div");
   handle.className = "drag-handle";
   handle.innerHTML = "☰";
@@ -83,7 +249,6 @@ function createTaskElement(task) {
     div.setAttribute("draggable", "false")
   );
 
-  // Task name with editable feature
   const name = document.createElement("div");
   name.className = "task-name";
   name.textContent = task.name;
@@ -94,17 +259,14 @@ function createTaskElement(task) {
   });
   name.addEventListener("click", (e) => e.stopPropagation());
 
-  // Spacer for layout
   const spacer = document.createElement("div");
   spacer.className = "task-spacer";
 
-  // Edit priority helpers
   marker.addEventListener("click", (e) => {
     e.stopPropagation();
     showPriorityMenu(task, div, marker);
   });
 
-  // Delete button + icon
   const deleteBtn = document.createElement("button");
   deleteBtn.className = "delete-btn";
   const trashIcon = document.createElement("img");
@@ -118,7 +280,9 @@ function createTaskElement(task) {
     div.addEventListener(
       "transitionend",
       () => {
-        tasks = tasks.filter((t) => t.id !== task.id);
+        tasksByTab[activeTab] = tasksByTab[activeTab].filter(
+          (t) => t.id !== task.id
+        );
         saveTasks();
         div.remove();
       },
@@ -135,7 +299,6 @@ function createTaskElement(task) {
   div.addEventListener("dragstart", () => div.classList.add("dragging"));
   div.addEventListener("dragend", () => div.classList.remove("dragging"));
 
-  // Insert in DOM
   div.appendChild(marker);
   div.appendChild(handle);
   div.appendChild(name);
@@ -147,7 +310,7 @@ function createTaskElement(task) {
 
 // Clear completed tasks
 function clearCompletedTasks() {
-  tasks = tasks.filter((t) => !t.completed);
+  tasksByTab[activeTab] = tasksByTab[activeTab].filter((t) => !t.completed);
   saveTasks();
   document.querySelectorAll(".task.completed").forEach((el) => el.remove());
 }
@@ -187,14 +350,15 @@ taskList.addEventListener("dragover", (e) => {
 
 taskList.addEventListener("drop", () => {
   const newOrder = Array.from(taskList.children).map((el) => el.dataset.dragId);
-  tasks.sort((a, b) => newOrder.indexOf(a.id) - newOrder.indexOf(b.id));
+  tasksByTab[activeTab].sort(
+    (a, b) => newOrder.indexOf(a.id) - newOrder.indexOf(b.id)
+  );
   saveTasks();
   renderTasks();
 });
 
 // Priority menu
 function showPriorityMenu(task, container, anchor) {
-  // Remove any existing menu
   document.querySelectorAll(".priority-edit-menu").forEach((el) => el.remove());
 
   const menu = document.createElement("div");
@@ -207,14 +371,12 @@ function showPriorityMenu(task, container, anchor) {
     btn.addEventListener("click", () => {
       task.priority = level;
       saveTasks();
-
       const updated = createTaskElement(task);
       container.replaceWith(updated);
     });
     menu.appendChild(btn);
   });
 
-  // Position the menu relative to marker
   const rect = anchor.getBoundingClientRect();
   menu.style.position = "fixed";
   menu.style.left = `${rect.left + 16}px`;
@@ -222,8 +384,6 @@ function showPriorityMenu(task, container, anchor) {
   menu.style.zIndex = "1000";
 
   document.body.appendChild(menu);
-
-  // Auto-remove on click outside
   document.addEventListener("click", () => menu.remove(), { once: true });
 }
 
@@ -250,20 +410,20 @@ function toggleTheme() {
 
 themeToggleBtn.addEventListener("click", toggleTheme);
 
-// Initialize
+// Init
 applyTheme();
 loadTasks();
 
-// Add event listeners for window controls
-document.getElementById("minBtn").addEventListener("click", () => {
-  window.electron.windowControl.minimize();
-});
-document.getElementById("maxBtn").addEventListener("click", () => {
-  window.electron.windowControl.maximize();
-});
-document.getElementById("closeBtn").addEventListener("click", () => {
-  window.electron.windowControl.close();
-});
+// Window controls
+document
+  .getElementById("minBtn")
+  .addEventListener("click", () => window.electron.windowControl.minimize());
+document
+  .getElementById("maxBtn")
+  .addEventListener("click", () => window.electron.windowControl.maximize());
+document
+  .getElementById("closeBtn")
+  .addEventListener("click", () => window.electron.windowControl.close());
 
 // Modal logic
 const settingsToggle = document.getElementById("settingsToggle");
@@ -275,50 +435,47 @@ settingsToggle.addEventListener("click", (e) => {
   settingsModal.classList.toggle("show", !isVisible);
 });
 
-// Hide modal if clicking outside
 document.addEventListener("click", (e) => {
   const isInside =
     settingsModal.contains(e.target) || settingsToggle.contains(e.target);
   if (!isInside) {
     settingsModal.classList.remove("show");
-
-    // Collapse dropdowns inside the modal
     document
       .querySelectorAll("#settingsModal details")
       .forEach((d) => d.removeAttribute("open"));
   }
 });
 
-// Modal settings buttons
 document.getElementById("exportTasks").addEventListener("click", () => {
-  window.electronAPI.exportTasks(tasks);
+  window.electronAPI.exportTasks(tasksByTab);
   showToast(`Exported tasks.`);
 });
 
 document.getElementById("importTasks").addEventListener("click", async () => {
   const imported = await window.electronAPI.importTasks();
-  if (Array.isArray(imported)) {
+  if (typeof imported === "object" && !Array.isArray(imported)) {
     const append = confirm(
-      "Append to existing tasks?\nClick Cancel to replace."
+      "Append imported tabs?\nClick Cancel to replace all."
     );
-    tasks = append ? [...tasks, ...imported] : imported;
+    tasksByTab = append ? { ...tasksByTab, ...imported } : imported;
     saveTasks();
+    renderTabs();
     renderTasks();
-    showToast(`Imported ${imported.length} tasks.`);
+    showToast(`Imported tabs.`);
   }
 });
 
 document.getElementById("clearAllTasks").addEventListener("click", () => {
   const confirmClear = confirm("Are you sure you want to clear all tasks?");
   if (confirmClear) {
-    tasks = [];
+    tasksByTab[activeTab] = [];
     saveTasks();
     renderTasks();
     showToast("All tasks cleared.");
   }
 });
 
-// Toast notifications
+// Toast
 function showToast(message, duration = 2500) {
   const toast = document.getElementById("toast");
   toast.textContent = message;
@@ -332,14 +489,34 @@ function showToast(message, duration = 2500) {
 }
 
 // Update events
-window.addEventListener("update-available", () => {
-  showToast("🔄 Update available. Downloading...");
+window.addEventListener("update-available", () =>
+  showToast("🔄 Update available. Downloading...")
+);
+window.addEventListener("update-downloaded", () =>
+  showToast("✅ Update downloaded. Restart to apply.")
+);
+
+// Version
+document.addEventListener("DOMContentLoaded", () => {
+  const versionDisplay = document.getElementById("appVersion");
+  if (versionDisplay) {
+    window.electronAPI.getAppVersion().then((version) => {
+      versionDisplay.textContent = version;
+    });
+  }
 });
+
+// Apply update
+const applyUpdateBtn = document.getElementById("applyUpdateBtn");
 
 window.addEventListener("update-downloaded", () => {
   showToast("✅ Update downloaded. Restart to apply.");
+  applyUpdateBtn.hidden = false;
 });
 
+applyUpdateBtn.addEventListener("click", () => {
+  window.electronAPI?.quitAndInstall?.();
+});
 
 // Hotkeys
 document.addEventListener("keydown", (e) => {
@@ -358,10 +535,7 @@ document.addEventListener("keydown", (e) => {
 
   if (e.ctrlKey && !e.shiftKey && key === "e") {
     e.preventDefault();
-    document.body.classList.toggle("light");
-    const isLight = document.body.classList.contains("light");
-    localStorage.setItem("theme", isLight ? "light" : "dark");
-    themeIcon.src = isLight ? "src/sun.svg" : "src/moon.svg";
+    toggleTheme();
   }
 
   if (e.ctrlKey && !e.shiftKey && key === "i") {
@@ -379,27 +553,3 @@ document.addEventListener("keydown", (e) => {
     window.electronAPI?.openDevTools?.();
   }
 });
-
-// Version display
-document.addEventListener("DOMContentLoaded", () => {
-  const versionDisplay = document.getElementById("appVersion");
-  if (versionDisplay) {
-    window.electronAPI.getAppVersion().then((version) => {
-      versionDisplay.textContent = version;
-    });
-  }
-});
-
-// Update button
-const applyUpdateBtn = document.getElementById("applyUpdateBtn");
-
-window.addEventListener("update-downloaded", () => {
-  showToast("✅ Update downloaded. Restart to apply.");
-  applyUpdateBtn.hidden = false;
-});
-
-applyUpdateBtn.addEventListener("click", () => {
-  window.electronAPI?.quitAndInstall?.();
-});
-
-
